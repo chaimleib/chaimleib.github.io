@@ -17,6 +17,7 @@ You will need to update the firmware in the TV.
 1. Use a Windows PC to format a USB flash drive as FAT32. (I used Parallels.)
 2. Download the [firmware].
 3. In the terminal, run
+
     ```
     cd ~/Downloads
     tar xf SE39UY04_20130827.zip
