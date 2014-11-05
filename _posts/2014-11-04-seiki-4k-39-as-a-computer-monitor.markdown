@@ -18,11 +18,11 @@ You will need to update the firmware in the TV.
 2. Download the [firmware].
 3. In the terminal, run
 
-    ```
-    cd ~/Downloads
-    tar xf SE39UY04_20130827.zip
-    cp install.img /Volumes/YOUR_FLASH/
-    ```
+```
+cd ~/Downloads
+tar xf SE39UY04_20130827.zip
+cp install.img /Volumes/YOUR_FLASH/
+```
 4. Eject the disk.
 5. Plug it into the TV.
 6. Open the service menu. On the remote, press:
