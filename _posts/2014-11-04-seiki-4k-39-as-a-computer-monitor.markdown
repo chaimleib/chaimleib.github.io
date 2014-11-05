@@ -21,6 +21,8 @@ You will need to update the firmware in the TV.
         cd ~/Downloads
         tar xf SE39UY04_20130827.zip
         cp install.img /Volumes/YOUR_FLASH/
+    
+    Double-clicking does not work (on a Mac at least) because it will also unpack install.img into a folder, which is not what we want; we want the .img file.
 
 4. Eject the disk.
 5. Plug it into the TV.
