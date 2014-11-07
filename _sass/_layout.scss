@@ -217,6 +217,17 @@
 .post-content {
     margin-bottom: $spacing-unit;
 
+    img {
+        max-height: 150px;
+        margin: 15px;
+        float: left;
+        
+    }
+    
+    img.rimg {
+        float: right;
+    }
+    
     h2 {
         font-size: 32px;
 
@@ -241,3 +252,4 @@
         }
     }
 }
+

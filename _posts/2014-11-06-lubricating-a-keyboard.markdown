@@ -12,9 +12,10 @@ The CRC 2-26 I got turned out to be a *bad* choice. It was not the grease I was 
 
 Unfortunately, the CRC 2-26 actually increased the friction, making my keyboard nearly unusable for fast typing. I'm not sure, but I'm guessing that although it might be plastic-safe, it was designed for metal-on-plastic and not plastic-on-plastic.
 
+![Super Lube]{: .rimg}
+
 I'm going to try again with Super Lube grease. Hopefully the thicker consistency will be just the thing.
 
-![Super Lube]
 
 [CRC 2-26]: {{ site.url }}/images/crc226.jpg
 [Super Lube]: {{ site.url }}/images/superlube.jpg
