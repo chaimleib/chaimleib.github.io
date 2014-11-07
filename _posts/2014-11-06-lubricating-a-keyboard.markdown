@@ -17,3 +17,5 @@ I'm going to try again with Super Lube grease. Hopefully the thicker consistency
 ![Super Lube]
 
 [CRC 2-26]: {{ site.url }}/images/crc226.jpg
+[Super Lube]: {{ site.url }}/images/superlube.jpg
+
