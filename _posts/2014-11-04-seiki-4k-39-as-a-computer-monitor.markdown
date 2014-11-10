@@ -63,6 +63,13 @@ But, if you want the convenience of your monitor always being on, and to turn it
 3. Turn Auto Power On on.
 4. Press Exit.
 
+* * *
+
+**Edits:**
+
+Nov 9, 2014:
+    More info on monitor arrangement and Auto Power On setting.
+
 
 [Amazon buy]: http://www.amazon.com/Seiki-SE39UY04-39-Inch-Ultra-Discontinued/dp/B00DOPGO2G
 [firmware]: http://www.seiki.com/support/downloads.php#firmware
