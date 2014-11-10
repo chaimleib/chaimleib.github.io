@@ -4,7 +4,15 @@ title:  "Seiki 4K 39-inch TV as a computer monitor"
 date:   2014-11-04 15:33
 categories: equipment
 ---
-I recently bought a [Seiki SE39UY04 4K TV][Amazon buy] when it was on sale for \$339. I'm using it with a Mid 2014 15-inch MacBook Pro, connected via its built-in HDMI port.
+I recently bought a [Seiki SE39UY04 4K TV][Amazon buy] when it was on sale for $339. I'm using it with a Mid&nbsp;2014 15&#8209;inch MacBook Pro, connected via its built-in HDMI port.
+
+I would not recommend this TV for games relying on quick reflexes (unless you set the resolution to 1080p). The refresh rate at 4k is noticeably slower than a real monitor, at 30&nbsp;Hz instead of 60&nbsp;Hz or higher. Also, there is a significant input lag. The firmware update roughly halves the lag, making it quite usable for productivity applications, but gamers will still be quite irritated.
+
+Nevertheless, I highly recommend the TV for productivity purposes. I regularly use it with four large windows displaying at once, and plenty of space for utilities on the side. Coupled with my laptop's screen, it's a real battlestation.
+
+For computer-based movie watching, it is a winner. Most movies are at ~30&nbsp;fps, so the Seiki is an excellent match for that. (Hey, it *is* a TV.) You will, however, still want the firmware update, or you will notice significant jerkiness on slow, panning shots.
+
+I wish there were more actual computer monitors at this glorious size!
 
 Some notes on setup:
 
@@ -68,7 +76,7 @@ But, if you want the convenience of your monitor always being on, and to turn it
 **Edits:**
 
 Nov 9, 2014:
-    More info on monitor arrangement and Auto Power On setting.
+    More info on monitor arrangement and Auto Power On setting. Added recommended usage in intro.
 
 
 [Amazon buy]: http://www.amazon.com/Seiki-SE39UY04-39-Inch-Ultra-Discontinued/dp/B00DOPGO2G
