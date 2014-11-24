@@ -16,6 +16,12 @@ Unfortunately, the CRC 2-26 actually increased the friction, making my keyboard 
 
 I'm going to try again with Super Lube grease. Hopefully the thicker consistency will be just the thing.
 
+### Update (2014-11-23)
+I applied the grease to both the keys and the holes for the larger-than normal keys on the right and left of my keyboard, and waited a few weeks to see what happens with time.
+
+At first, the greased keys worked smoothly, but sluggishly. I probably used too much grease; it's likely enough to just grease the hole or just the key, not both.
+
+Over time, they began working more quickly. Now, there is a noticeable difference in the friction of the greased and un-greased keys. Even the letter keys are noticeably creaky and sticky compared to the the greased ones. I am going to completely grease my keyboard now.
 
 [CRC 2-26]: {{ site.url }}/images/crc226.jpg
 [Super Lube]: {{ site.url }}/images/superlube.jpg
