@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Lubricating a Keyboard"
+title:  "Lubricating a keyboard"
 date:   2014-11-06 21:18
 categories: equipment
 ---
