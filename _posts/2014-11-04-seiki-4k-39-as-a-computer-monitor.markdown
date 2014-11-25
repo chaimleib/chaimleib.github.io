@@ -16,12 +16,12 @@ I wish there were more actual computer monitors at this glorious size!
 
 Some notes on setup:
 
-##Monitor arrangement
+## Monitor arrangement
 Use the Displays panel in System Preferences, and drag the displays so that they more or less match your physical configuration. I like matching corners together, so that my mouse doesn't get caught there when I move across the screens.
 
-If you have an asymmetric desk, I think it's better to put the Seiki TV on the left, because most such desks are right-handed and have drawers on the right. This means you have to sit on the left side of the desk where there is leg room, and so your main monitor should be on the left. If your desk is left-handed, reverse this.
+If you have an asymmetric desk, be careful to put your main monitor directly in front of where you sit. Most desks are right-handed, and this means you have to sit on the left side where there is leg room. So for most desks, your main monitor should be on the left, directly in front of you. If your desk is left-handed, reverse this.
 
-##Mouse lag
+## Mouse lag
 You will need to update the firmware in the TV. 
 
 1. Use a Windows PC to format a USB flash drive as FAT32. (I used Parallels.)
@@ -36,13 +36,35 @@ You will need to update the firmware in the TV.
     4. Select Yes.
 7. The TV will turn off and flash the power light blue and red. After a minute, the TV will turn on again. Mouse lag should be much improved.
 
-##Blurry text
-In the menu, turn sharpness down to 0.
+## Blurry text
 
-##Colors
+### Sharpness setting
+In the TV's menu, turn sharpness down to 0.
+
+### Force RGB color space
+Because the Mac detects the Seiki as a TV, it tries to use the YCrPb color space common on TVs. However, this results in subpixel inaccuracies and blurry text.
+
+1. Get the ruby script.
+    1. Go to [https://gist.github.com/adaugherity/7435890]().
+    2. Click the Raw button.
+    3. Save the script with Cmd-S.
+
+2. Run it from the Terminal.
+    1. Navigate to the script's location with `cd <location>`
+    2. `ruby patch-edid.rb`
+
+3. Install the new config with 
+
+        sudo mv DisplayVendorID* /System/Library/Displays/Overrides 
+
+    You will be asked for your password.
+    
+4. Restart your Mac.
+
+## Colors
 In the menu, set brightness to ~25 and contrast to ~62. Then, in the Displays panel in System Preferences, calibrate the display with advanced options.
 
-##Auto-off
+## Auto-off
 By the default, the TV will turn off after a few hours, even when a signal is present. To prevent this,
 
 1. Open the service menu. On the remote, press:
@@ -59,7 +81,7 @@ Also, the TV will turn off in about a minute if no signal is present. This happe
 2. Open Energy Saver.
 3. For Power Adapter, set "Turn display off after" to "Never."
 
-##Turn monitor on when plugged in
+## Turn monitor on when plugged in
 When I first set this, I thought it meant that the TV would turn on as soon as I connected HDMI to my laptop. I was wrong. Instead, this setting affects what happens when *power* is plugged in, not video.
 
 But, if you want the convenience of your monitor always being on, and to turn it on automatically after a power interruption, you can. The power draw is ~80W at my backlight settings.
@@ -78,6 +100,8 @@ But, if you want the convenience of your monitor always being on, and to turn it
 Nov 9, 2014:
     More info on monitor arrangement and Auto Power On setting. Added recommended usage in intro.
 
+Nov 24, 2014:
+    Added section Force RGB color space
 
 [Amazon buy]: http://www.amazon.com/Seiki-SE39UY04-39-Inch-Ultra-Discontinued/dp/B00DOPGO2G
 [firmware]: http://www.seiki.com/support/downloads.php#firmware
