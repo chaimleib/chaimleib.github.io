@@ -25,7 +25,7 @@ If you have an asymmetric desk, be careful to put your main monitor directly in 
 You will need to update the firmware in the TV. 
 
 1. Use a Windows PC to format a USB flash drive as FAT32. (I used Parallels.)
-2. Download the [firmware].
+2. Download the [firmware]. (Get the one that adds in backlight controls, or else your backlight settings will be forgotten whenever the TV powers off.)
 3. Unzip the firmware to get install.img, then copy this firmware image to the flash drive.
 4. Eject the disk.
 5. Plug it into the TV.
@@ -44,12 +44,12 @@ In the TV's menu, turn sharpness down to 0.
 ### Force RGB color space
 Because the Mac detects the Seiki as a TV, it tries to use the YCrPb color space common on TVs. However, this results in subpixel inaccuracies and blurry text.
 
-1. Get the ruby script.
+1. Get the ruby script:
     1. Go to [https://gist.github.com/adaugherity/7435890]().
     2. Click the Raw button.
     3. Save the script with Cmd-S.
 
-2. Run it from the Terminal.
+2. Run it from the Terminal:
     1. Navigate to the script's location with `cd <location>`
     2. `ruby patch-edid.rb`
 
@@ -102,6 +102,9 @@ Nov 9, 2014:
 
 Nov 24, 2014:
     Added section Force RGB color space
+
+Nov 25, 2014:
+    The backlight-enabled firmware will also work.
 
 [Amazon buy]: http://www.amazon.com/Seiki-SE39UY04-39-Inch-Ultra-Discontinued/dp/B00DOPGO2G
 [firmware]: http://www.seiki.com/support/downloads.php#firmware
