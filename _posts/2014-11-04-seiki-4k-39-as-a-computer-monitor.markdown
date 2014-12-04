@@ -6,13 +6,17 @@ categories: equipment
 ---
 I recently bought a [Seiki SE39UY04 4K TV][Amazon buy] when it was on sale for $339. I'm using it with a Mid&nbsp;2014 15&#8209;inch MacBook Pro, connected via its built-in HDMI port.
 
-I would not recommend this TV for games relying on quick reflexes (unless you set the resolution to 1080p). The refresh rate at 4k is noticeably slower than a real monitor, at 30&nbsp;Hz instead of 60&nbsp;Hz or higher. Also, there is a significant input lag. The firmware update roughly halves the lag, making it quite usable for productivity applications, but gamers will still be quite irritated.
+First the bad news.
 
-Nevertheless, I highly recommend the TV for productivity purposes. I regularly use it with four large windows displaying at once, and plenty of space for utilities on the side. Coupled with my laptop's screen, it's a real battlestation.
+I would not recommend this TV for games relying on quick reflexes (unless you set the resolution to 1080p). The 30&nbsp;Hz refresh rate at 4k is noticeably slower than a real monitor, which usually run at 60&nbsp;Hz or higher. Also, there is a significant input lag. The firmware update roughly halves the lag, making it quite usable for productivity applications, but gamers will still be quite irritated. After the firmware update, I eyeballed the lag at ~120&nbsp;ms using this [calibration video].
 
-For computer-based movie watching, it is a winner. Most movies are at ~30&nbsp;fps, so the Seiki is an excellent match for that. (Hey, it *is* a TV.) You will, however, still want the firmware update, or you will notice significant jerkiness on slow, panning shots.
+For computer-based movie watching, it is ok, but not great. You will want the firmware update, or you will notice significant jerkiness on slow, panning shots. The jerkiness won't completely disappear with the update, but it will be reduced. Also, the display does not distinguish dark colors very well, compared to my Retina MacBook Pro display. Using the movie picture mode helped, but the colors still weren't as good as the MBP.
 
-I wish there were more actual computer monitors at this glorious size!
+Now the good news.
+
+Despite the above, I highly recommend the TV for productivity purposes. I regularly use it with four large windows displaying at once, and plenty of space for utilities on the side. Coupled with my laptop's screen, it's a real battlestation.
+
+I wish there were more actual computer monitors at this glorious size (and at this price)!
 
 Some notes on setup:
 
@@ -105,6 +109,10 @@ Nov 24, 2014:
 
 Nov 25, 2014:
     The backlight-enabled firmware will also work.
+    
+Dec 4, 2014:
+    Notes about dark colors and video lag measurement.
 
 [Amazon buy]: http://www.amazon.com/Seiki-SE39UY04-39-Inch-Ultra-Discontinued/dp/B00DOPGO2G
 [firmware]: http://www.seiki.com/support/downloads.php#firmware
+[calibration video]: https://www.youtube.com/watch?v=52134vY0SNU
