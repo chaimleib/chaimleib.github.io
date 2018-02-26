@@ -1,16 +1,16 @@
 # Site settings
-title: Chaim-Leib Halbert
+title: Chaim Leib Halbert
 email: chaim.leib.halbert@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   <p>Chaim-Leib's personal website.</p>
   
   <p>You can also check out his blogs at</p>
   <ul>
-      <li><a href='http://manhacking.blogspot.com/'>man hacking</a></li>
-      <li><a href='http://unlabeledjew.blogspot.com/'>Unlabeled Jew</a></li>
+      <li><a href='https://manhacking.blogspot.com/'>man hacking</a></li>
+      <li><a href='https://unlabeledjew.blogspot.com/'>Unlabeled Jew</a></li>
      </ul>
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://chaimleib.github.io" # the base hostname & protocol for your site
+url: "https://chaimleib.github.io" # the base hostname & protocol for your site
 twitter_username: ChaimHalbert
 github_username:  chaimleib
 
