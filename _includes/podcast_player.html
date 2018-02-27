@@ -1,0 +1,39 @@
+<div class="podcast-player" data-playlist="{{ include.playlist }}" data-currentFile="{{ include.file }}">
+  <div class="title">
+    <span class="trackTitle">Track Title</span>
+    <div class="timer">0:00</div>
+    <div class="duration">0:00</div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controlsOuter">
+    <div class="controlsInner">
+      <div class="loading">Loading...</div>
+      <div class="btn playBtn">Play</div>
+      <div class="btn pauseBtn">Pause</div>
+      <div class="btn prevBtn">Prev</div>
+      <div class="btn nextBtn">Next</div>
+    </div>
+    <div class="btn playlistBtn">Playlist</div>
+    <div class="btn volumeBtn">Volume</div>
+  </div>
+
+  <!-- Progress -->
+  <div class="waveform"></div>
+  <div class="bar"></div>
+  <div class="progress"></div>
+
+  <!-- Playlist -->
+  <div class="playlist">
+    <div class="list"></div>
+  </div>
+
+  <!-- Volume -->
+  <div class="volume fadeout">
+    <div class="barFull bar">#</div>
+    <div class="barEmpty bar">ø</div>
+    <div class="sliderBtn">•</div>
+  </div>
+ 
+</div>
+

@@ -1,0 +1,31 @@
+---
+layout: default
+js:
+- "https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.9/howler.min.js"
+- "/js/siriwave.js"
+- "/js/podcast_player.js"
+---
+<script>
+window.playlist = [
+{% for track in site.shapiro_zichronos %}
+  {
+    "file": "{{ track.id }}",
+    "hdate": "{{ track.hdate }}",
+    "title": "{{ track.title }}"
+  }{% unless forloop.last %},{% endunless %}
+{% endfor %}
+];
+</script>
+<div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title }}</h1>
+    <p class="post-meta">{{ page.hdate }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %}</p>
+  </header>
+  
+  {% include podcast_player.html playlist="playlist" file=page.id %}
+
+  <article class="post-content">
+    {{ content }}
+  </article>
+</div>
