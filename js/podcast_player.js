@@ -67,7 +67,7 @@ var Player = function(playlist, currentFile, dom) {
     }
   );
   
-  var elms = ['trackTitle', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'bar', 'wave', 'waveform', 'loading', 'playlist', 'list', 'volume', 'barEmpty', 'barFull', 'sliderBtn'];
+  var elms = ['trackTitle', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'wave', 'waveform', 'loading', 'playlist', 'list', 'volume', 'sliderBtn'];
   for (var i=0; i<elms.length; i++) {
     var cls = elms[i];
     var elm = self.dom.player.getElementsByClassName(cls);
@@ -76,15 +76,13 @@ var Player = function(playlist, currentFile, dom) {
     }
   }
 
-  // Display the title of the first track.
-  self._updTrackTitle();
 
   // Setup the playlist display.
   for (var i=0; i<playlist.length; i++) {
     var track = playlist[i];
     var div = document.createElement('div');
     div.className = 'list-track';
-    div.innerHTML = track.title;
+    div.innerHTML = track.hdate + ' - ' + track.title;
     var savedIndex = i;
     div.onclick = function() {
       self.skipTo(savedIndex);
@@ -105,10 +103,6 @@ var Player = function(playlist, currentFile, dom) {
   self.dom.volume.addEventListener('click', function() { self.toggleVolume(); });
 
   // Setup the event listeners to enable dragging of volume slider.
-  self.dom.barEmpty.addEventListener('click', function(event) {
-    var per = event.layerX / parseFloat(self.dom.barEmpty.scrollWidth);
-    self.volume(per);
-  });
   self.dom.sliderBtn.addEventListener('mousedown', function() {
     self.sliderDown = true;
   });
@@ -122,14 +116,13 @@ var Player = function(playlist, currentFile, dom) {
     self.sliderDown = false;
   });
 
-
   var move = function(event) {
     if (self.sliderDown) {
-      var x = event.clientX || event.touches[0].clientX;
-      var startX = self.dom.player.innerWidth * 0.05;
-      var layerX = x - startX;
-      var per = Math.min(1, Math.max(0,
-        layerX / parseFloat(self.dom.barEmpty.scrollWidth)));
+      var sliderHeight = self.dom.sliderBtn.clientHeight;
+      var y = event.clientY || event.touches[0].clientY;
+      var travel = self.dom.volume.clientHeight - sliderHeight;
+      var clientY = y - self.dom.volume.offsetTop - 0.5 * sliderHeight;
+      var per = Math.min(1, Math.max(0, 1 - clientY / travel));
       self.volume(per);
     }
   };
@@ -164,19 +157,15 @@ var Player = function(playlist, currentFile, dom) {
     self.wave.canvas.width = width;
     self.wave.container.style.margin = -(height / 2) + 'px auto';
 
-    // Update the position of the slider.
-    var sound = self.playlist[self.index].howl;
-    if (sound) {
-      var vol = sound.volume();
-      var barWidth = (vol * 0.9);
-      self.dom.sliderBtn.style.left = (
-        self.dom.player.innerWidth * barWidth +
-        self.dom.player.innerWidth * 0.05 - 25
-      ) + 'px';
-    }
+    self._updVolume();
   };
-  window.addEventListener('resize', resize);
   resize();
+  window.addEventListener('resize', resize);
+  
+  // set initial DOM state
+  self._updTrackTitle();
+  self.dom.loading.style.display = 'none';
+  self.dom.playBtn.style.display = 'inline-block';
 };
 
 Player.prototype = {
@@ -189,16 +178,18 @@ Player.prototype = {
     var sound;
 
     index = typeof index === 'number' ? index : self.index;
-    var data = self.playlist[index];
+    var track = self.playlist[index];
 
     // If we already loaded this track, use the current one.
     // Otherwise, setup and load a new Howl.
-    if (data.howl) {
-      sound = data.howl;
+    if (track.howl) {
+      sound = track.howl;
     } else {
-      sound = data.howl = new Howl({
-        src: [data.file + '.m4a'],
-        html5: true, // Force to HTML5 so that the audio can stream in (best for large files).
+      sound = track.howl = new Howl({
+        src: [track.file + '.m4a'],
+        // Force to HTML5 so that the audio can stream in (best for large
+        // files). Makes Chrome act up under Webrick(?).
+        html5: false,
         onplay: function() {
           // Display the duration.
           self.dom.duration.innerHTML = self.formatTime(Math.round(sound.duration()));
@@ -208,30 +199,27 @@ Player.prototype = {
 
           // Start the wave animation if we have already loaded
           self.wave.container.style.display = 'block';
-          self.dom.bar.style.display = 'none';
           self.dom.pauseBtn.style.display = 'inline-block';
         },
         onload: function() {
           // Start the wave animation.
           self.wave.container.style.display = 'block';
-          self.dom.bar.style.display = 'none';
           self.dom.loading.style.display = 'none';
         },
         onend: function() {
           // Stop the wave animation.
           self.wave.container.style.display = 'none';
-          self.dom.bar.style.display = 'block';
-          self.skip('right');
+          if (self.index + 1 < self.playlist.length) {
+            self.skip('right');
+          }
         },
         onpause: function() {
           // Stop the wave animation.
           self.wave.container.style.display = 'none';
-          self.dom.bar.style.display = 'block';
         },
         onstop: function() {
           // Stop the wave animation.
           self.wave.container.style.display = 'none';
-          self.dom.bar.style.display = 'block';
         }
       });
     }
@@ -259,7 +247,8 @@ Player.prototype = {
   _updTrackTitle: function() {
     var self = this;
     var ord = self.index + 1;
-    var title = self.playlist[self.index].title;
+    var track = self.playlist[self.index];
+    var title = track.hdate + ' - ' + track.title;
     if (self.showTrackNum) {
       self.dom.trackTitle.innerHTML = ord + '. ' + title;
     } else {
@@ -333,14 +322,19 @@ Player.prototype = {
    */
   volume: function(val) {
     var self = this;
-
-    // Update the global volume (affecting all Howls).
     Howler.volume(val);
-
+    self._updVolume();
+  },
+  
+  _updVolume: function() {
     // Update the display on the slider.
-    var barWidth = (val * 90) / 100;
-    self.dom.barFull.style.width = (barWidth * 100) + '%';
-    self.dom.sliderBtn.style.left = (window.innerWidth * barWidth + window.innerWidth * 0.05 - 25) + 'px';
+    var self = this;
+    var vol = Howler.volume() || 1;
+    var sliderHeight = self.dom.sliderBtn.clientHeight;
+    var travel = self.dom.volume.clientHeight - sliderHeight;
+    self.dom.sliderBtn.style.top = (
+      travel * (1 - vol)
+    ) + 'px';
   },
 
   /**
@@ -389,7 +383,8 @@ Player.prototype = {
     setTimeout(function() {
       self.dom.playlist.style.display = display;
     }, (display === 'block') ? 0 : 500);
-    self.dom.playlist.className = (display === 'block') ? 'fadein' : 'fadeout';
+    self.dom.playlist.classList.toggle('fadein');
+    self.dom.playlist.classList.toggle('fadeout');
   },
 
   /**
@@ -401,8 +396,10 @@ Player.prototype = {
 
     setTimeout(function() {
       self.dom.volume.style.display = display;
+      self._updVolume();
     }, (display === 'block') ? 0 : 500);
-    self.dom.volume.className = (display === 'block') ? 'fadein' : 'fadeout';
+    self.dom.volume.classList.toggle('fadein');
+    self.dom.volume.classList.toggle('fadeout');
   },
 
   /**
@@ -411,10 +408,15 @@ Player.prototype = {
    * @return {String}      Formatted time.
    */
   formatTime: function(secs) {
-    var minutes = Math.floor(secs / 60) || 0;
-    var seconds = (secs - minutes * 60) || 0;
-
-    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+    var hours = Math.floor(secs/3600) || 0;
+    var minutes = Math.floor((secs - 3600*hours) / 60) || 0;
+    var seconds = (secs - 60*minutes) || 0;
+    var secondsStr = (seconds < 10 ? '0' : '') + seconds;
+    if (!hours) {
+      return minutes + ':' + secondsStr;
+    }
+    var minutesStr = (minutes < 10 ? '0' : '') + minutes;
+    return hours + ':' + minutesStr + ':' + secondsStr;
   }
 };
 

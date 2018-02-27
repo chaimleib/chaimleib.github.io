@@ -1,39 +1,36 @@
 <div class="podcast-player" data-playlist="{{ include.playlist }}" data-currentFile="{{ include.file }}">
   <div class="title">
-    <span class="trackTitle">Track Title</span>
-    <div class="timer">0:00</div>
-    <div class="duration">0:00</div>
-  </div>
-
-  <!-- Controls -->
-  <div class="controlsOuter">
-    <div class="controlsInner">
-      <div class="loading">Loading...</div>
-      <div class="btn playBtn">Play</div>
-      <div class="btn pauseBtn">Pause</div>
-      <div class="btn prevBtn">Prev</div>
-      <div class="btn nextBtn">Next</div>
+    <span class="trackTitle playlistBtn">Track Title</span>
+  <!-- Playlist -->
+    <div class="playlist">
+      <div class="list"></div>
     </div>
-    <div class="btn playlistBtn">Playlist</div>
-    <div class="btn volumeBtn">Volume</div>
   </div>
 
   <!-- Progress -->
+  <div class="progressOuter">
+    <div class="progress"></div>
+  </div>
+  
+  <!-- Controls -->
+  <div class="controlsOuter">
+    <div class="controlsInner">
+      <!-- Volume -->
+      <div class="btn volumeBtn"></div>
+      <div class="volume fadeout">
+        <div class="sliderBtn">▬</div>
+      </div>
+      <div class="btn loading">···</div>
+      <div class="btn playBtn"></div>
+      <div class="btn pauseBtn"></div>
+      <span class="timer">0:00</span>&nbsp;/ <span class="duration">0:00</span>
+      <div class="skippers">
+        <div class="btn prevBtn"></div>
+        <div class="btn nextBtn"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="waveform"></div>
-  <div class="bar"></div>
-  <div class="progress"></div>
-
-  <!-- Playlist -->
-  <div class="playlist">
-    <div class="list"></div>
-  </div>
-
-  <!-- Volume -->
-  <div class="volume fadeout">
-    <div class="barFull bar">#</div>
-    <div class="barEmpty bar">ø</div>
-    <div class="sliderBtn">•</div>
-  </div>
- 
 </div>
 

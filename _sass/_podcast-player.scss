@@ -1,52 +1,123 @@
+$controls-height: 25px;
+$button-width: $controls-height;
+$button-border-width: 2px;
+$button-border-color: grey;
+$player-width: 600px;
+$player-height: 3 * $controls-height + 6 * $button-border-width;
+
+$controls-bg-color: rgba(128, 128, 128, .9);
+$button-border: $button-border-width solid $button-border-color;
+$lrPadding: 4px;
+
 .podcast-player {
-  width: 600px;
-  height: 0.3 * 600px;
-  .btn {
-    border: 2px solid grey;
-    display: inline-block;
-  }
+  width: $player-width;
+  height: $player-height;
+  border: 1px solid cyan;
   
-  .pauseBtn {
-    display: none;
-  }
   .waveform {
-    width: 100%;
-    height: 30%;
+    width: $player-width;
+    height: $player-height - 2*$controls-height;
     display: none;
     cursor: pointer;
   }
-  .bar {
-    width: 100%;
-    height: 2px;
-    background-color: rgba(255, 255, 255, 0.9);
-  }
   .progress {
     width: 0%;
-    height: 100%;
+    height: $controls-height;
     background-color: #000;
     z-index: -1;
   }
   .loading {
     display: none;
+    height: $controls-height;
+    width: $button-width;
+    background: rgba(192, 192, 192, 1);
   }
+
   .playlist {
     display: none;
+    padding-left: $lrPadding;
+    padding-right: $lrPadding;
+  }
+  .trackTitle {
+    padding-left: $lrPadding;
+    padding-right: $lrPadding;
+    max-width: 100%;
+    text-decoration: underline;
+    height: $controls-height;
+    padding-top: $button-border-width;
+    padding-bottom: $button-border-width;
+    display: inline-block;
   }
   .list {
-    width: 100%;
-    height: 360px;
+    width: $player-width - 2 * $button-border-width;
+    min-height: 100px;
+    height: $player-height - $controls-height - 4 * $button-border-width;
+    margin-left: -$lrPadding;
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    text-overflow: ellipsis;
+    background-color: rgba(200, 200, 200, 0.9);
+    border: $button-border;
+  }
+  .list-track {
+    padding-left: $lrPadding;
+    padding-right: $lrPadding;
   }
   .list-track:hover {
     cursor: pointer;
   }
+
+  .progressOuter {
+    border: $button-border;
+  }
   .volume {
     display: none;
+    position: absolute;
+    height: 3 * $controls-height;
+    width: $button-width;
+    border: $button-border;
+    background-color: $controls-bg-color;
+    text-align: center;
+  }
+  .btn {
+    height: $controls-height;
+    border: $button-border;
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+  }
+  .skippers {
+    float: right;
+  }
+  .prevBtn {
+    font-family: "Webdings";
+    width: $button-width;
+  }
+  .nextBtn {
+    font-family: "Webdings";
+    width: $button-width;
+  }
+  .playBtn {
+    font-family: "Webdings";
+    width: $button-width;
+  }
+  .pauseBtn {
+    display: none;
+    font-family: "Webdings";
+    width: $button-width;
+  }
+  .volumeBtn {
+    font-family: "Webdings";
+    width: $button-width;
   }
   .sliderBtn {
-    width: 30px;
-    height: 30px;
+    position: absolute;
+    width: $button-width;
     cursor: pointer;
     background-color: rgba(255, 255, 255, 0.8);
+    border-radius: $button-width / 2;
+    font-family: "Webdings";
   }
   
   /* Fade-In */
@@ -84,6 +155,5 @@
     from { opacity: 1; }
     to   { opacity: 0; }
   }
-  
 }
 
