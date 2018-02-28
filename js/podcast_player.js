@@ -68,7 +68,7 @@ var Player = function(playlist, currentFile, dom) {
   );
   self.showTrackNumber = self.showTrackList = self.playlist.length > 1;
   
-  var elms = ['trackTitle', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'wave', 'waveform', 'loading', 'playlist', 'list', 'volume', 'sliderBtn'];
+  var elms = ['trackTitle', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'loading', 'playlist', 'list', 'volume', 'sliderBtn'];
   for (var i=0; i<elms.length; i++) {
     var cls = elms[i];
     var elm = self.dom.player.getElementsByClassName(cls);
@@ -103,7 +103,6 @@ var Player = function(playlist, currentFile, dom) {
   // Bind our player controls.
   self.dom.playBtn.addEventListener('click', function() { self.play(); });
   self.dom.pauseBtn.addEventListener('click', function() { self.pause(); });
-  self.dom.waveform.addEventListener('click', function(event) { self.seek(event.clientX / self.dom.player.innerWidth); });
   if (self.showTrackList) {
     self.dom.playlistBtn.addEventListener('click', function() { self.togglePlaylist(); });
     self.dom.playlist.addEventListener('click', function() { self.togglePlaylist(); });
@@ -138,40 +137,14 @@ var Player = function(playlist, currentFile, dom) {
       var travel = self.dom.volume.clientHeight - sliderHeight;
       var clientY = y - self.dom.volume.offsetTop - 0.5 * sliderHeight;
       var per = Math.min(1, Math.max(0, 1 - clientY / travel));
+      console.log('clientY: ' + clientY + ' per: ' + per);
       self.volume(per);
     }
   };
   self.dom.volume.addEventListener('mousemove', move);
   self.dom.volume.addEventListener('touchmove', move);
   
-  
-  // Setup the "waveform" animation.
-  self.wave = new SiriWave({
-      container: self.dom.waveform,
-      width: self.dom.player.innerWidth,
-      height: self.dom.player.innerHeight * 0.3,
-      cover: true,
-      speed: 0.03,
-      amplitude: 0.7,
-      frequency: 2
-  });
-  self.wave.start();
-
-  // Update the height of the wave animation.
-  // These are basically some hacks to get SiriWave.js to do what we want.
   var resize = function() {
-    var height = self.dom.player.innerHeight * 0.3;
-    var width = self.dom.player.innerWidth;
-    self.wave.height = height;
-    self.wave.height_2 = height / 2;
-    self.wave.MAX = self.wave.height_2 - 4;
-    self.wave.width = width;
-    self.wave.width_2 = width / 2;
-    self.wave.width_4 = width / 4;
-    self.wave.canvas.height = height;
-    self.wave.canvas.width = width;
-    self.wave.container.style.margin = -(height / 2) + 'px auto';
-
     self._updVolume();
   };
   resize();
@@ -212,29 +185,19 @@ Player.prototype = {
           // Start upating the progress of the track.
           requestAnimationFrame(self.step.bind(self));
 
-          // Start the wave animation if we have already loaded
-          self.wave.container.style.display = 'block';
           self.dom.pauseBtn.style.display = 'inline-block';
         },
         onload: function() {
-          // Start the wave animation.
-          self.wave.container.style.display = 'block';
           self.dom.loading.style.display = 'none';
         },
         onend: function() {
-          // Stop the wave animation.
-          self.wave.container.style.display = 'none';
           if (self.index + 1 < self.playlist.length) {
             self.skip('right');
           }
         },
         onpause: function() {
-          // Stop the wave animation.
-          self.wave.container.style.display = 'none';
         },
         onstop: function() {
-          // Stop the wave animation.
-          self.wave.container.style.display = 'none';
         }
       });
     }
@@ -344,7 +307,10 @@ Player.prototype = {
   _updVolume: function() {
     // Update the display on the slider.
     var self = this;
-    var vol = Howler.volume() || 1;
+    var vol = 1;
+    if (typeof Howler.volume === 'function') {
+      vol = Howler.volume();
+    }
     var sliderHeight = self.dom.sliderBtn.clientHeight;
     var travel = self.dom.volume.clientHeight - sliderHeight;
     self.dom.sliderBtn.style.top = (
