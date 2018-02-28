@@ -66,6 +66,7 @@ var Player = function(playlist, currentFile, dom) {
       return track.file === currentFile;
     }
   );
+  self.showTrackNumber = self.showTrackList = self.playlist.length > 1;
   
   var elms = ['trackTitle', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'wave', 'waveform', 'loading', 'playlist', 'list', 'volume', 'sliderBtn'];
   for (var i=0; i<elms.length; i++) {
@@ -82,7 +83,15 @@ var Player = function(playlist, currentFile, dom) {
     var track = playlist[i];
     var div = document.createElement('div');
     div.className = 'list-track';
-    div.innerHTML = track.hdate + ' - ' + track.title;
+    if (i === self.index) {
+      div.className += ' current-track';
+    }
+    if (self.showTrackNum) {
+      var ord = i + 1;
+      div.innerHTML = ord + '. ' + track.hdate + ' - ' + track.title;
+    } else {
+      div.innerHTML = track.hdate + ' - ' + track.title;
+    }
     var savedIndex = i;
     div.onclick = function() {
       self.skipTo(savedIndex);
@@ -94,11 +103,17 @@ var Player = function(playlist, currentFile, dom) {
   // Bind our player controls.
   self.dom.playBtn.addEventListener('click', function() { self.play(); });
   self.dom.pauseBtn.addEventListener('click', function() { self.pause(); });
-  self.dom.prevBtn.addEventListener('click', function() { self.skip('prev'); });
-  self.dom.nextBtn.addEventListener('click', function() { self.skip('next'); });
   self.dom.waveform.addEventListener('click', function(event) { self.seek(event.clientX / self.dom.player.innerWidth); });
-  self.dom.playlistBtn.addEventListener('click', function() { self.togglePlaylist(); });
-  self.dom.playlist.addEventListener('click', function() { self.togglePlaylist(); });
+  if (self.showTrackList) {
+    self.dom.playlistBtn.addEventListener('click', function() { self.togglePlaylist(); });
+    self.dom.playlist.addEventListener('click', function() { self.togglePlaylist(); });
+    self.dom.prevBtn.addEventListener('click', function() { self.skip('prev'); });
+    self.dom.nextBtn.addEventListener('click', function() { self.skip('next'); });
+  } else {
+    self.dom.trackTitle.style['text-decoration'] = 'none';
+    self.dom.prevBtn.style.display = 'none';
+    self.dom.nextBtn.style.display = 'none';
+  }
   self.dom.volumeBtn.addEventListener('click', function() { self.toggleVolume(); });
   self.dom.volume.addEventListener('click', function() { self.toggleVolume(); });
 

@@ -50,19 +50,26 @@ $lrPadding: 4px;
   }
   .list {
     width: $player-width - 2 * $button-border-width;
-    min-height: 100px;
+    max-height: 30%;
     height: $player-height - $controls-height - 4 * $button-border-width;
     margin-left: -$lrPadding;
     position: absolute;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     text-overflow: ellipsis;
-    background-color: rgba(200, 200, 200, 0.9);
+    background-color: rgba(200, 200, 200, 1);
     border: $button-border;
   }
   .list-track {
     padding-left: $lrPadding;
     padding-right: $lrPadding;
+    text-decoration: underline;
+    color: rgba(50, 50, 50, 1);
+  }
+  .current-track {
+    text-decoration: none;
+    font-weight: bold;
+    color: default;
   }
   .list-track:hover {
     cursor: pointer;
