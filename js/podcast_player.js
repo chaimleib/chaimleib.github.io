@@ -68,7 +68,7 @@ var Player = function(playlist, currentFile, dom) {
   );
   self.showTrackNumber = self.showTrackList = self.playlist.length > 1;
   
-  var elms = ['trackTitle', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'loading', 'playlist', 'list', 'volume', 'sliderBtn'];
+  var elms = ['trackTitle', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'progressInner', 'loading', 'playlist', 'list', 'volume', 'sliderBtn'];
   for (var i=0; i<elms.length; i++) {
     var cls = elms[i];
     var elm = self.dom.player.getElementsByClassName(cls);
@@ -76,7 +76,9 @@ var Player = function(playlist, currentFile, dom) {
       self.dom[cls] = elm[0];
     }
   }
-
+  
+  // set initial DOM state
+  self._updTrackTitle();
 
   // Setup the playlist display.
   for (var i=0; i<playlist.length; i++) {
@@ -99,6 +101,51 @@ var Player = function(playlist, currentFile, dom) {
     self.dom.list.appendChild(div);
   }
   
+  var sound;
+  var track = self.playlist[self.index];
+
+  // If we already loaded this track, use the current one.
+  // Otherwise, setup and load a new Howl.
+  if (track.howl) {
+    sound = track.howl;
+  } else {
+    sound = track.howl = new Howl({
+      src: [track.file + '.m4a'],
+      // Force to HTML5 so that the audio can stream in (best for large
+      // files). Makes Chrome act up under Webrick(?).
+      html5: false,
+      preload: true,
+      onplay: function() {
+        console.log('play');
+        // Start upating the progress of the track.
+        requestAnimationFrame(self.step.bind(self));
+
+        self.dom.pauseBtn.style.display = 'inline-block';
+        self.dom.playBtn.style.display = 'none';
+        self._updProgress();
+      },
+      onload: function() {
+        console.log('load');
+        self.dom.loading.style.display = 'none';
+        self.dom.playBtn.style.display = 'inline-block';
+        self._updProgress();
+      },
+      onend: function() {
+        console.log('end');
+        if (self.index + 1 < self.playlist.length) {
+          self.skip('right');
+        }
+      },
+      onpause: function() {
+        console.log('pause');
+        self.dom.playBtn.style.display = 'inline-block';
+        self.dom.pauseBtn.style.display = 'none';
+      },
+      onstop: function() {
+        console.log('stop');
+      }
+    });
+  }
 
   // Bind our player controls.
   self.dom.playBtn.addEventListener('click', function() { self.play(); });
@@ -130,30 +177,56 @@ var Player = function(playlist, currentFile, dom) {
     self.sliderDown = false;
   });
 
-  var move = function(event) {
+  var moveVolume = function(event) {
     if (self.sliderDown) {
       var sliderHeight = self.dom.sliderBtn.clientHeight;
       var y = event.clientY || event.touches[0].clientY;
       var travel = self.dom.volume.clientHeight - sliderHeight;
       var clientY = y - self.dom.volume.offsetTop - 0.5 * sliderHeight;
       var per = Math.min(1, Math.max(0, 1 - clientY / travel));
-      console.log('clientY: ' + clientY + ' per: ' + per);
       self.volume(per);
     }
   };
-  self.dom.volume.addEventListener('mousemove', move);
-  self.dom.volume.addEventListener('touchmove', move);
+  self.dom.volume.addEventListener('mousemove', moveVolume);
+  self.dom.volume.addEventListener('touchmove', moveVolume);
+
+  var moveProgress = function(event) {
+    if (!self.progressDown) {
+      return;
+    }
+    var progressWidth = self.dom.progressInner.clientWidth;
+    var x = event.clientX || event.touches[0].clientX;
+    var travel = progressWidth;
+    var clientX = x - self.dom.progressInner.offsetLeft;
+    var per = Math.min(1, Math.max(0, clientX / travel));
+    self.seek(per);
+    console.log("per: " + per + " cx: " + clientX + " x: " + x + " travel: " + travel);
+  };
+  self.dom.progressInner.addEventListener('mousemove', moveProgress);
+  self.dom.progressInner.addEventListener('touchmove', moveProgress);
   
+  // Setup the event listeners to enable dragging of progress slider.
+  self.dom.progressInner.addEventListener('mousedown', function(event) {
+    self.progressDown = true;
+    moveProgress(event);
+  });
+  self.dom.progressInner.addEventListener('touchstart', function(event) {
+    self.progressDown = true;
+    moveProgress(event);
+  });
+  self.dom.progressInner.addEventListener('mouseup', function() {
+    self.progressDown = false;
+  });
+  self.dom.progressInner.addEventListener('touchend', function() {
+    self.progressDown = false;
+  });
+   
   var resize = function() {
     self._updVolume();
+    self._updProgress();
   };
   resize();
   window.addEventListener('resize', resize);
-  
-  // set initial DOM state
-  self._updTrackTitle();
-  self.dom.loading.style.display = 'none';
-  self.dom.playBtn.style.display = 'inline-block';
 };
 
 Player.prototype = {
@@ -163,50 +236,20 @@ Player.prototype = {
    */
   play: function(index) {
     var self = this;
-    var sound;
 
-    index = typeof index === 'number' ? index : self.index;
-    var track = self.playlist[index];
-
-    // If we already loaded this track, use the current one.
-    // Otherwise, setup and load a new Howl.
-    if (track.howl) {
-      sound = track.howl;
-    } else {
-      sound = track.howl = new Howl({
-        src: [track.file + '.m4a'],
-        // Force to HTML5 so that the audio can stream in (best for large
-        // files). Makes Chrome act up under Webrick(?).
-        html5: false,
-        onplay: function() {
-          // Display the duration.
-          self.dom.duration.innerHTML = self.formatTime(Math.round(sound.duration()));
-
-          // Start upating the progress of the track.
-          requestAnimationFrame(self.step.bind(self));
-
-          self.dom.pauseBtn.style.display = 'inline-block';
-        },
-        onload: function() {
-          self.dom.loading.style.display = 'none';
-        },
-        onend: function() {
-          if (self.index + 1 < self.playlist.length) {
-            self.skip('right');
-          }
-        },
-        onpause: function() {
-        },
-        onstop: function() {
-        }
-      });
+    // Keep track of the index we are currently playing.
+    if (index !== undefined) {
+      self.index = index;
     }
+
+    var sound = self.playlist[self.index].howl;
 
     // Begin playing the sound.
     sound.play();
 
     // Update the track display.
     self._updTrackTitle();
+    self._updProgress();
 
     // Show the pause button.
     if (sound.state() === 'loaded') {
@@ -218,8 +261,6 @@ Player.prototype = {
       self.dom.pauseBtn.style.display = 'none';
     }
 
-    // Keep track of the index we are currently playing.
-    self.index = index;
   },
   
   _updTrackTitle: function() {
@@ -329,9 +370,8 @@ Player.prototype = {
     var sound = self.playlist[self.index].howl;
 
     // Convert the percent into a seek position.
-    if (sound.playing()) {
-      sound.seek(sound.duration() * per);
-    }
+    sound.seek(sound.duration() * per);
+    self._updProgress();
   },
 
   /**
@@ -340,18 +380,35 @@ Player.prototype = {
   step: function() {
     var self = this;
 
+    self._updProgress();
+    
     // Get the Howl we want to manipulate.
     var sound = self.playlist[self.index].howl;
-
-    // Determine our current seek position.
-    var seek = sound.seek() || 0;
-    self.dom.timer.innerHTML = self.formatTime(Math.round(seek));
-    self.dom.progress.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
-
+    
     // If the sound is still playing, continue stepping.
     if (sound.playing()) {
       requestAnimationFrame(self.step.bind(self));
     }
+  },
+  
+  _updProgress: function() {
+    var self = this;
+    
+    // Get the Howl we want to manipulate.
+    var track = self.playlist[self.index];
+    if (!track || !track.howl) {
+      self.dom.timer.innerHTML = self.formatTime(null);
+      self.dom.duration.innerHTML = self.formatTime(null);
+      self.dom.progress.style.width = '0%';
+      return;
+    }
+    
+    var sound = track.howl;
+    // Determine our current seek position.
+    var seek = sound.seek() || 0;
+    self.dom.timer.innerHTML = self.formatTime(Math.round(seek));
+    self.dom.duration.innerHTML = self.formatTime(Math.round(sound.duration()));
+    self.dom.progress.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
   },
 
   /**
@@ -389,15 +446,13 @@ Player.prototype = {
    * @return {String}      Formatted time.
    */
   formatTime: function(secs) {
-    var hours = Math.floor(secs/3600) || 0;
-    var minutes = Math.floor((secs - 3600*hours) / 60) || 0;
+    if (typeof secs !== 'number') {
+      return '--:--';
+    }
+    var minutes = Math.floor(secs / 60) || 0;
     var seconds = (secs - 60*minutes) || 0;
     var secondsStr = (seconds < 10 ? '0' : '') + seconds;
-    if (!hours) {
-      return minutes + ':' + secondsStr;
-    }
-    var minutesStr = (minutes < 10 ? '0' : '') + minutes;
-    return hours + ':' + minutesStr + ':' + secondsStr;
+    return minutes + ':' + secondsStr;
   }
 };
 
