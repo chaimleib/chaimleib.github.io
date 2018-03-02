@@ -5,5 +5,5 @@ title: "R' Shmuel Levitin - Goimel"
 published: true
 ---
 
-Intro to series, and R' Shmuel Levitin benches Goimel.
+Intro to series, and R' Shmuel Levitin bentshes Goimel.
 

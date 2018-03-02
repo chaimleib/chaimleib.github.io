@@ -16,12 +16,13 @@ markdown: kramdown
 
 
 collections:
-  shapiro_zichronos:
+  shapirozichronos:
     output: true
 defaults:
   - scope:
       path: ""
-      type: shapiro_zichronos
+      type: shapirozichronos
     values:
       layout: podcast
+      series: "Rabbi Shapiro's Zichronos"
 
