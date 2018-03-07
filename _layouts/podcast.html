@@ -18,7 +18,7 @@ window.playlist = [
 <div class="post">
 
   <header class="post-header">
-    <h1 class="post-series">{{ page.series }}</h1>
+    <h1 class="post-series"><a href="{{ page.seriesHome }}">{{ page.series }}</a></h1>
     <h2 class="post-title">{{ page.title }}</h2>
     <p class="post-meta">{{ page.hdate }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %}</p>
   </header>

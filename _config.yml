@@ -25,4 +25,5 @@ defaults:
     values:
       layout: podcast
       series: "Rabbi Shapiro's Zichronos"
+      seriesHome: /shapirozichronos/
 
