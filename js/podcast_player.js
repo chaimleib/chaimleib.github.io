@@ -116,7 +116,6 @@ var Player = function(playlist, currentFile, dom) {
       html5: false,
       preload: true,
       onplay: function() {
-        console.log('play');
         // Start upating the progress of the track.
         requestAnimationFrame(self.step.bind(self));
 
@@ -125,24 +124,20 @@ var Player = function(playlist, currentFile, dom) {
         self._updProgress();
       },
       onload: function() {
-        console.log('load');
         self.dom.loading.style.display = 'none';
         self.dom.playBtn.style.display = 'inline-block';
         self._updProgress();
       },
       onend: function() {
-        console.log('end');
         if (self.index + 1 < self.playlist.length) {
           self.skip('right');
         }
       },
       onpause: function() {
-        console.log('pause');
         self.dom.playBtn.style.display = 'inline-block';
         self.dom.pauseBtn.style.display = 'none';
       },
       onstop: function() {
-        console.log('stop');
       }
     });
   }
@@ -151,6 +146,9 @@ var Player = function(playlist, currentFile, dom) {
   self.dom.playBtn.addEventListener('click', function() { self.play(); });
   self.dom.pauseBtn.addEventListener('click', function() { self.pause(); });
   if (self.showTrackList) {
+    self.dom.trackTitle.style['text-decoration'] = 'underline';
+    self.dom.prevBtn.style.display = 'inline-block';
+    self.dom.nextBtn.style.display = 'inline-block';
     self.dom.playlistBtn.addEventListener('click', function() { self.togglePlaylist(); });
     self.dom.playlist.addEventListener('click', function() { self.togglePlaylist(); });
     self.dom.prevBtn.addEventListener('click', function() { self.skip('prev'); });
@@ -161,66 +159,58 @@ var Player = function(playlist, currentFile, dom) {
     self.dom.nextBtn.style.display = 'none';
   }
   self.dom.volumeBtn.addEventListener('click', function() { self.toggleVolume(); });
-  self.dom.volume.addEventListener('click', function() { self.toggleVolume(); });
 
-  // Setup the event listeners to enable dragging of volume slider.
-  self.dom.sliderBtn.addEventListener('mousedown', function() {
-    self.sliderDown = true;
-  });
-  self.dom.sliderBtn.addEventListener('touchstart', function() {
-    self.sliderDown = true;
-  });
-  self.dom.volume.addEventListener('mouseup', function() {
-    self.sliderDown = false;
-  });
-  self.dom.volume.addEventListener('touchend', function() {
-    self.sliderDown = false;
-  });
-
-  var moveVolume = function(event) {
-    if (self.sliderDown) {
-      var sliderHeight = self.dom.sliderBtn.clientHeight;
-      var y = event.clientY || event.touches[0].clientY;
-      var travel = self.dom.volume.clientHeight - sliderHeight;
-      var clientY = y - self.dom.volume.offsetTop - 0.5 * sliderHeight;
-      var per = Math.min(1, Math.max(0, 1 - clientY / travel));
-      self.volume(per);
-    }
+  // volume drag
+  var volumeChanged = function(event) {
+    event.preventDefault();
+    var sliderHeight = self.dom.sliderBtn.clientHeight;
+    var y = event.clientY || event.touches[0].clientY;
+    var travel = self.dom.volume.clientHeight - sliderHeight;
+    var clientY = y - self.dom.volume.offsetTop - 0.5 * sliderHeight;
+    var per = Math.min(1, Math.max(0, 1 - clientY / travel));
+    self.volume(per);
   };
-  self.dom.volume.addEventListener('mousemove', moveVolume);
-  self.dom.volume.addEventListener('touchmove', moveVolume);
+  var startVolumeDrag = function(event) {
+    event.preventDefault();
+    document.addEventListener('mousemove', volumeChanged);
+    document.addEventListener('touchmove', volumeChanged);
+    document.addEventListener('mouseup', endVolumeDrag);
+    document.addEventListener('touchend', endVolumeDrag);
+  };
+  var endVolumeDrag = function(event) {
+    event.preventDefault();
+    document.removeEventListener('mousemove', volumeChanged);
+    document.removeEventListener('touchmove', volumeChanged);
+  };
+  self.dom.volume.addEventListener('mousedown', startVolumeDrag);
+  self.dom.volume.addEventListener('touchstart', startVolumeDrag);
 
-  var moveProgress = function(event) {
-    if (!self.progressDown) {
-      return;
-    }
+  // progress drag
+  var progressChanged = function(event) {
+    event.preventDefault();
     var progressWidth = self.dom.progressInner.clientWidth;
     var x = event.clientX || event.touches[0].clientX;
     var travel = progressWidth;
     var clientX = x - self.dom.progressInner.offsetLeft;
     var per = Math.min(1, Math.max(0, clientX / travel));
     self.seek(per);
-    console.log("per: " + per + " cx: " + clientX + " x: " + x + " travel: " + travel);
   };
-  self.dom.progressInner.addEventListener('mousemove', moveProgress);
-  self.dom.progressInner.addEventListener('touchmove', moveProgress);
+  var startProgressDrag = function(event) {
+    event.preventDefault();
+    progressChanged(event);
+    document.addEventListener('mousemove', progressChanged);
+    document.addEventListener('touchmove', progressChanged);
+    document.addEventListener('mouseup', endProgressDrag);
+    document.addEventListener('touchend', endProgressDrag);
+  };
+  var endProgressDrag = function(event) {
+    event.preventDefault();
+    document.removeEventListener('mousemove', progressChanged);
+    document.removeEventListener('touchmove', progressChanged);
+  };
+  self.dom.progressInner.addEventListener('mousedown', startProgressDrag);
+  self.dom.progressInner.addEventListener('touchstart', startProgressDrag);
   
-  // Setup the event listeners to enable dragging of progress slider.
-  self.dom.progressInner.addEventListener('mousedown', function(event) {
-    self.progressDown = true;
-    moveProgress(event);
-  });
-  self.dom.progressInner.addEventListener('touchstart', function(event) {
-    self.progressDown = true;
-    moveProgress(event);
-  });
-  self.dom.progressInner.addEventListener('mouseup', function() {
-    self.progressDown = false;
-  });
-  self.dom.progressInner.addEventListener('touchend', function() {
-    self.progressDown = false;
-  });
-   
   var resize = function() {
     self._updVolume();
     self._updProgress();
