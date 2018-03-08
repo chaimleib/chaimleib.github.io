@@ -6,10 +6,13 @@ published: true
 ---
 
 ## Ha'aros • Notes
+<p dir="rtl">
 1)  למה שסיפר ר"ל שי' שפירא ע"ד השריפה וכו' - שמעתי זה גם מרש"ב שי' לעוויטן שגם הוא היה שם. סיפר שבין הדברים אמר הרבי: מ'ברעכט מיינע בנינים, ווער נעמט אחריות?! (הרב גוראי' מדיטרויט)
+</p>
 
 2) Small correction, the 2 buildings next to 770 were bought by R' Aharon Klein, not by Merkos (Yosef Katzman)
 
+<p dir="rtl">
 3) בנוגע הסיפור עם 
 השריפה שהרבי 
 ביקש מהרב חודוקוב כפי שזכור 
@@ -24,6 +27,9 @@ published: true
 בלי אחריות שלא 
 איכפת להם כלל 
 ומזה הרבי היה מאוד מודאג. (?)
+</p>
 
-![0002 - 26 Menachem Av 5777 Ha'aros; R' Sholom Dovber Volpeh](./0002 - 26 Menachem Av 5777 Ha'aros; R' Sholom Dovber Volpeh.jpg)
+<div class="zoom">
+<img alt="R' Sholom Dovber Volpeh" src="./0002 - 26 Menachem Av 5777 Ha'aros; R' Sholom Dovber Volpeh.jpg"/>
+</div>
 
