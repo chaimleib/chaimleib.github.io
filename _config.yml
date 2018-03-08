@@ -16,14 +16,14 @@ markdown: kramdown
 
 
 collections:
-  shapirozichronos:
+  schapirozichronos:
     output: true
 defaults:
   - scope:
       path: ""
-      type: shapirozichronos
+      type: schapirozichronos
     values:
       layout: podcast
-      series: "Rabbi Shapiro's Zichronos"
-      seriesHome: /shapirozichronos/
+      series: "Rabbi Schapiro's Zichronos"
+      seriesHome: /schapirozichronos/
 
