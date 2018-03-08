@@ -92,8 +92,6 @@
     }
 }
 
-
-
 /**
  * Site footer
  */
@@ -168,8 +166,6 @@
     }
 }
 
-
-
 /**
  * Page content
  */
@@ -198,7 +194,8 @@
 .post-link {
     display: block;
     font-size: 24px;
-}
+
+  }
 
 
 
@@ -223,10 +220,47 @@
     margin-bottom: $spacing-unit;
 
     img {
-        max-height: 150px;
+        max-width: 200px;
         margin: 15px;
         float: left;
-        
+    }
+    
+    .zoom {
+      position: relative;
+      display: inline-block;
+        &:before {
+          display: inline-block;
+          border-radius: 8px;
+          background: rgba(128, 128, 128, 0.7);
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          font-size: 30px;
+          padding-top: 0;
+          padding-bottom: 0.15em;
+          line-height: 1.5;
+          padding-right: 0.3em;
+          font-size: 50px;
+          padding-left: 0.3em;
+          content: "\2922";
+          text-align: center;
+          vertical-align: middle;
+          color: rgba(255, 255, 255, 0.9);
+          transition: content 0.3s;
+        }
+        &:hover:before {
+          content: none;
+        }
+      
+      img {
+        transition: max-width 0.2s, margin-left 0.2s, margin-right 0.2s;
+        &:hover {
+          max-width: 100%;
+          margin-left: 0;
+          margin-right: 0;
+        }
+      }
+      
     }
     
     img.rimg {
