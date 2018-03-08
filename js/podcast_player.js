@@ -114,7 +114,6 @@ var Player = function(playlist, currentFile, dom) {
       // Force to HTML5 so that the audio can stream in (best for large
       // files). Makes Chrome act up under Webrick(?).
       html5: false,
-      preload: true,
       onplay: function() {
         // Start upating the progress of the track.
         requestAnimationFrame(self.step.bind(self));
@@ -164,9 +163,9 @@ var Player = function(playlist, currentFile, dom) {
   var volumeChanged = function(event) {
     event.preventDefault();
     var sliderHeight = self.dom.sliderBtn.clientHeight;
-    var y = event.clientY || event.touches[0].clientY;
+    var y = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
     var travel = self.dom.volume.clientHeight - sliderHeight;
-    var clientY = y - self.dom.volume.offsetTop - 0.5 * sliderHeight;
+    var clientY = y - getTop(self.dom.volume) - 0.5 * sliderHeight;
     var per = Math.min(1, Math.max(0, 1 - clientY / travel));
     self.volume(per);
   };
@@ -189,9 +188,9 @@ var Player = function(playlist, currentFile, dom) {
   var progressChanged = function(event) {
     event.preventDefault();
     var progressWidth = self.dom.progressInner.clientWidth;
-    var x = event.clientX || event.touches[0].clientX;
+    var x = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
     var travel = progressWidth;
-    var clientX = x - self.dom.progressInner.offsetLeft;
+    var clientX = x - getLeft(self.dom.progressInner);
     var per = Math.min(1, Math.max(0, clientX / travel));
     self.seek(per);
   };
@@ -218,6 +217,26 @@ var Player = function(playlist, currentFile, dom) {
   resize();
   window.addEventListener('resize', resize);
 };
+
+// https://stackoverflow.com/questions/5598743/finding-elements-position-relative-to-the-document
+function getLeft(elem) { // crossbrowser version
+    var box = elem.getBoundingClientRect();
+    var body = document.body;
+    var docEl = document.documentElement;
+    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+    var left = box.left + scrollLeft - clientLeft;
+    return left;
+}
+function getTop(elem) {
+    var box = elem.getBoundingClientRect();
+    var body = document.body;
+    var docEl = document.documentElement;
+    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    var clientTop = docEl.clientTop || body.clientTop || 0;
+    var top  = box.top +  scrollTop - clientTop;
+    return top;
+  }
 
 Player.prototype = {
   /**
