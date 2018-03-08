@@ -1,0 +1,29 @@
+---
+file: "0002 - 26 Menachem Av 5777 Firefighters in 770"
+hdate: "26 Menachem Av 5777"
+title: "Firefighters in 770"
+published: true
+---
+
+## Ha'aros • Notes
+1)  למה שסיפר ר"ל שי' שפירא ע"ד השריפה וכו' - שמעתי זה גם מרש"ב שי' לעוויטן שגם הוא היה שם. סיפר שבין הדברים אמר הרבי: מ'ברעכט מיינע בנינים, ווער נעמט אחריות?! (הרב גוראי' מדיטרויט)
+
+2) Small correction, the 2 buildings next to 770 were bought by R' Aharon Klein, not by Merkos (Yosef Katzman)
+
+3) בנוגע הסיפור עם 
+השריפה שהרבי 
+ביקש מהרב חודוקוב כפי שזכור 
+לי שאחי נתן היה בזמנו כאן ב770
+הנה לפי מה שזכור 
+לי הרבי היה מודאג בנוגע 
+ הספריה  של 
+אדמו״ר הקודם שהיתה למטה 
+הרבי היה מודאג 
+שהם לא יזיקו עם 
+המים שהם מתיזים
+בלי אחריות שלא 
+איכפת להם כלל 
+ומזה הרבי היה מאוד מודאג. (?)
+
+![0002 - 26 Menachem Av 5777 Ha'aros; R' Sholom Dovber Volpeh](./0002 - 26 Menachem Av 5777 Ha'aros; R' Sholom Dovber Volpeh.jpg)
+
