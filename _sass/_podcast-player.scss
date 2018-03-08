@@ -1,8 +1,6 @@
 $controls-height: 25px;
 $button-width: $controls-height;
 $button-border-width: 2px;
-$player-width: 600px;
-$player-height: 3 * $controls-height + 6 * $button-border-width;
 
 $controls-bg-color: rgba(96, 96, 96, 1);
 $button-border-color: $controls-bg-color;
@@ -13,10 +11,11 @@ $disabled: rgba(192, 192, 192, 1);
 $float-controls-color: rgba(192, 192, 192, 1);
 
 .podcast-player {
-  max-width: $player-width;
+  min-width: 300px;
   background: $controls-bg-color;
   color: white;
   margin-bottom: 1em;
+  position: relative;
 
   .progress {
     width: 0%;
@@ -37,8 +36,6 @@ $float-controls-color: rgba(192, 192, 192, 1);
 
   .playlist {
     display: none;
-    padding-left: $lrPadding;
-    padding-right: $lrPadding;
   }
   .trackTitle {
     padding-left: $lrPadding;
@@ -50,9 +47,9 @@ $float-controls-color: rgba(192, 192, 192, 1);
     display: inline-block;
   }
   .list {
-    width: $player-width - 2 * $button-border-width;
-    max-height: 30%;
-    margin-left: -$lrPadding;
+    right: 0;
+    left: 0;
+    max-height: 50vh;
     position: absolute;
     overflow-x: hidden;
     overflow-y: auto;
