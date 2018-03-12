@@ -101,45 +101,7 @@ var Player = function(playlist, currentFile, dom) {
     self.dom.list.appendChild(div);
   }
   
-  var sound;
-  var track = self.playlist[self.index];
-
-  // If we already loaded this track, use the current one.
-  // Otherwise, setup and load a new Howl.
-  if (track.howl) {
-    sound = track.howl;
-  } else {
-    sound = track.howl = new Howl({
-      src: [track.file + '.m4a'],
-      // Force to HTML5 so that the audio can stream in (best for large
-      // files). Makes Chrome act up under Webrick(?).
-      html5: false,
-      onplay: function() {
-        // Start upating the progress of the track.
-        requestAnimationFrame(self.step.bind(self));
-
-        self.dom.pauseBtn.style.display = 'inline-block';
-        self.dom.playBtn.style.display = 'none';
-        self._updProgress();
-      },
-      onload: function() {
-        self.dom.loading.style.display = 'none';
-        self.dom.playBtn.style.display = 'inline-block';
-        self._updProgress();
-      },
-      onend: function() {
-        if (self.index + 1 < self.playlist.length) {
-          self.skip('right');
-        }
-      },
-      onpause: function() {
-        self.dom.playBtn.style.display = 'inline-block';
-        self.dom.pauseBtn.style.display = 'none';
-      },
-      onstop: function() {
-      }
-    });
-  }
+  var sound = self.loadSound();
 
   // Bind our player controls.
   self.dom.playBtn.addEventListener('click', function() { self.play(); });
@@ -239,6 +201,47 @@ function getTop(elem) {
   }
 
 Player.prototype = {
+  loadSound: function() {
+    var self = this;
+    var track = self.playlist[self.index];
+    if (track.sound) {
+      return track.sound;
+    }
+    var sound = track.howl = new Howl({
+      src: [track.file + '.m4a'],
+      // Force to HTML5 so that the audio can stream in (best for large
+      // files). Makes Chrome act up under Webrick(?).
+      html5: false,
+      onplay: function() {
+        // Start upating the progress of the track.
+        requestAnimationFrame(self.step.bind(self));
+
+        self.dom.pauseBtn.style.display = 'inline-block';
+        self.dom.playBtn.style.display = 'none';
+        self._updProgress();
+      },
+      onload: function() {
+        self.dom.loading.style.display = 'none';
+        self.dom.playBtn.style.display = 'inline-block';
+        self._updProgress();
+      },
+      onend: function() {
+        if (self.index + 1 < self.playlist.length) {
+          self.skip('right');
+        }
+      },
+      onpause: function() {
+        self.dom.playBtn.style.display = 'inline-block';
+        self.dom.pauseBtn.style.display = 'none';
+      },
+      onstop: function() {
+      },
+      onseek: function() {
+        console.log(this.seek());
+      }
+    });
+    return sound;
+  },
   /**
    * Play a song in the playlist.
    * @param  {Number} index Index of the song in the playlist (leave empty to play the first or current).
@@ -251,7 +254,7 @@ Player.prototype = {
       self.index = index;
     }
 
-    var sound = self.playlist[self.index].howl;
+    var sound = self.loadSound();
 
     // Begin playing the sound.
     sound.play();
