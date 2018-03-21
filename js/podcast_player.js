@@ -232,32 +232,30 @@ Player.prototype = {
    * Play a song in the playlist.
    * @param  {Number} index Index of the song in the playlist (leave empty to play the first or current).
    */
-  play: function(index) {
+  play: function() {
     var self = this;
 
-    // Keep track of the index we are currently playing.
-    if (index !== undefined) {
-      self.index = index;
-    }
-  
     // Update the track display.
     self._updTrackTitle();
     self._updProgress();
 
-
-    var sound = self.loadSound();
-
     // Begin playing the sound.
-    sound.play();
+    var sound = self.loadSound();
 
     // Show the pause button.
     if (sound.state() === 'loaded') {
+      sound.play();
+    } else {
+      console.log('could not load sound');
+    }
+    if (sound.playing()) {
       self.dom.playBtn.style.display = 'none';
       self.dom.pauseBtn.style.display = 'inline-block';
     } else {
       self.dom.loading.style.display = 'inline-block';
       self.dom.playBtn.style.display = 'none';
       self.dom.pauseBtn.style.display = 'none';
+      console.log('could not play loaded sound');
     }
 
   },
@@ -266,6 +264,7 @@ Player.prototype = {
     var self = this;
     var ord = self.index + 1;
     var track = self.playlist[self.index];
+    console.log(self.index);
     var title = track.hdate + ' - ' + track.title;
     if (self.showTrackNum) {
       self.dom.trackTitle.innerHTML = ord + '. ' + title;
@@ -350,8 +349,8 @@ Player.prototype = {
       self.playlist[self.index].howl.stop();
     }
 
-    // Play the new track.
-    self.play(index);
+    self.index = index;
+    self.play();
   },
 
   /**
@@ -414,8 +413,8 @@ Player.prototype = {
     
     // Get the Howl we want to manipulate.
     var track = self.playlist[self.index];
-    if (!track || !track.howl) {
-      self.dom.timer.innerHTML = self.formatTime(null);
+    if (!track || !track.howl || track.howl.state() !== 'loaded') {
+      self.dom.elapsed.innerHTML = self.formatTime(null);
       self.dom.duration.innerHTML = self.formatTime(null);
       self.dom.progressBar.style.width = '0%';
       return;
@@ -423,8 +422,8 @@ Player.prototype = {
     
     var sound = track.howl;
     // Determine our current seek position.
-    var seek = sound.seek() || 0;
-    self.dom.timer.innerHTML = self.formatTime(Math.round(seek));
+    var seek = sound.seek();
+    self.dom.elapsed.innerHTML = self.formatTime(Math.round(seek));
     self.dom.duration.innerHTML = self.formatTime(Math.round(sound.duration()));
     self.dom.progressBar.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
   },
@@ -433,14 +432,15 @@ Player.prototype = {
    * Toggle the playlist display on/off.
    */
   togglePlaylist: function() {
+    console.log('togglePlaylist');
     var self = this;
-    var display = (self.dom.playlist.style.display === 'block') ? 'none' : 'block';
+    var display = (self.dom.playlistFrame.style.display === 'block') ? 'none' : 'block';
 
     setTimeout(function() {
-      self.dom.playlist.style.display = display;
+      self.dom.playlistFrame.style.display = display;
     }, (display === 'block') ? 0 : 500);
-    self.dom.playlist.classList.toggle('fadein');
-    self.dom.playlist.classList.toggle('fadeout');
+    self.dom.playlistFrame.classList.toggle('fadeout');
+    self.dom.playlistFrame.classList.toggle('fadein');
   },
 
   /**
@@ -448,14 +448,14 @@ Player.prototype = {
    */
   toggleVolume: function() {
     var self = this;
-    var display = (self.dom.volume.style.display === 'block') ? 'none' : 'block';
+    var display = (self.dom.volumeFrame.style.display === 'block') ? 'none' : 'block';
 
     setTimeout(function() {
-      self.dom.volume.style.display = display;
+      self.dom.volumeFrame.style.display = display;
       self._updVolume();
     }, (display === 'block') ? 0 : 500);
-    self.dom.volume.classList.toggle('fadein');
-    self.dom.volume.classList.toggle('fadeout');
+    self.dom.volumeFrame.classList.toggle('fadein');
+    self.dom.volumeFrame.classList.toggle('fadeout');
   },
 
   /**
