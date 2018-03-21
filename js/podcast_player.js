@@ -68,7 +68,14 @@ var Player = function(playlist, currentFile, dom) {
   );
   self.showTrackNumber = self.showTrackList = self.playlist.length > 1;
   
-  var elms = ['trackTitle', 'timer', 'duration', 'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'playlistBtn', 'volumeBtn', 'progress', 'progressInner', 'loading', 'playlist', 'list', 'volume', 'sliderBtn'];
+  var elms = [
+    'trackTitle',
+    'playlistBtn', 'playlistFrame', 'playlist',
+    'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'loading',
+    'volumeBtn', 'volumeFrame', 'volumeActiveZone', 'volumeBar',
+    'progressFrame', 'progressActiveZone', 'progressBar',
+    'elapsed', 'duration', 
+  ];
   for (var i=0; i<elms.length; i++) {
     var cls = elms[i];
     var elm = self.dom.player.getElementsByClassName(cls);
@@ -79,39 +86,19 @@ var Player = function(playlist, currentFile, dom) {
   
   // set initial DOM state
   self._updTrackTitle();
+  self._updPlaylist();
 
-  // Setup the playlist display.
-  for (var i=0; i<playlist.length; i++) {
-    var track = playlist[i];
-    var div = document.createElement('div');
-    div.className = 'list-track';
-    if (i === self.index) {
-      div.className += ' current-track';
-    }
-    if (self.showTrackNum) {
-      var ord = i + 1;
-      div.innerHTML = ord + '. ' + track.hdate + ' - ' + track.title;
-    } else {
-      div.innerHTML = track.hdate + ' - ' + track.title;
-    }
-    var savedIndex = i;
-    div.onclick = function() {
-      self.skipTo(savedIndex);
-    };
-    self.dom.list.appendChild(div);
-  }
-  
   var sound = self.loadSound();
 
   // Bind our player controls.
-  self.dom.playBtn.addEventListener('click', function() { self.play(); });
-  self.dom.pauseBtn.addEventListener('click', function() { self.pause(); });
+  self.dom.playBtn.addEventListener('click', self.play.bind(self));
+  self.dom.pauseBtn.addEventListener('click', self.pause.bind(self));
   if (self.showTrackList) {
     self.dom.trackTitle.style['text-decoration'] = 'underline';
     self.dom.prevBtn.style.display = 'inline-block';
     self.dom.nextBtn.style.display = 'inline-block';
-    self.dom.playlistBtn.addEventListener('click', function() { self.togglePlaylist(); });
-    self.dom.playlist.addEventListener('click', function() { self.togglePlaylist(); });
+    self.dom.playlistBtn.addEventListener('click', self.togglePlaylist.bind(self));
+    self.dom.playlistFrame.addEventListener('click', self.togglePlaylist.bind(self));
     self.dom.prevBtn.addEventListener('click', function() { self.skip('prev'); });
     self.dom.nextBtn.addEventListener('click', function() { self.skip('next'); });
   } else {
@@ -119,15 +106,14 @@ var Player = function(playlist, currentFile, dom) {
     self.dom.prevBtn.style.display = 'none';
     self.dom.nextBtn.style.display = 'none';
   }
-  self.dom.volumeBtn.addEventListener('click', function() { self.toggleVolume(); });
+  self.dom.volumeBtn.addEventListener('click', self.toggleVolume.bind(self));
 
   // volume drag
   var volumeChanged = function(event) {
     event.preventDefault();
-    var sliderHeight = self.dom.sliderBtn.clientHeight;
     var y = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
-    var travel = self.dom.volume.clientHeight - sliderHeight;
-    var clientY = y - getTop(self.dom.volume) - 0.5 * sliderHeight;
+    var travel = self.dom.volumeActiveZone.clientHeight;
+    var clientY = y - getTop(self.dom.volumeActiveZone);
     var per = Math.min(1, Math.max(0, 1 - clientY / travel));
     self.volume(per);
   };
@@ -143,16 +129,16 @@ var Player = function(playlist, currentFile, dom) {
     document.removeEventListener('mousemove', volumeChanged);
     document.removeEventListener('touchmove', volumeChanged);
   };
-  self.dom.volume.addEventListener('mousedown', startVolumeDrag);
-  self.dom.volume.addEventListener('touchstart', startVolumeDrag);
+  self.dom.volumeActiveZone.addEventListener('mousedown', startVolumeDrag);
+  self.dom.volumeActiveZone.addEventListener('touchstart', startVolumeDrag);
 
   // progress drag
   var progressChanged = function(event) {
     event.preventDefault();
-    var progressWidth = self.dom.progressInner.clientWidth;
+    var progressWidth = self.dom.progressActiveZone.clientWidth;
     var x = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
     var travel = progressWidth;
-    var clientX = x - getLeft(self.dom.progressInner);
+    var clientX = x - getLeft(self.dom.progressActiveZone);
     var per = Math.min(1, Math.max(0, clientX / travel));
     self.seek(per);
   };
@@ -169,8 +155,8 @@ var Player = function(playlist, currentFile, dom) {
     document.removeEventListener('mousemove', progressChanged);
     document.removeEventListener('touchmove', progressChanged);
   };
-  self.dom.progressInner.addEventListener('mousedown', startProgressDrag);
-  self.dom.progressInner.addEventListener('touchstart', startProgressDrag);
+  self.dom.progressActiveZone.addEventListener('mousedown', startProgressDrag);
+  self.dom.progressActiveZone.addEventListener('touchstart', startProgressDrag);
   
   var resize = function() {
     self._updVolume();
@@ -253,15 +239,16 @@ Player.prototype = {
     if (index !== undefined) {
       self.index = index;
     }
+  
+    // Update the track display.
+    self._updTrackTitle();
+    self._updProgress();
+
 
     var sound = self.loadSound();
 
     // Begin playing the sound.
     sound.play();
-
-    // Update the track display.
-    self._updTrackTitle();
-    self._updProgress();
 
     // Show the pause button.
     if (sound.state() === 'loaded') {
@@ -284,6 +271,29 @@ Player.prototype = {
       self.dom.trackTitle.innerHTML = ord + '. ' + title;
     } else {
       self.dom.trackTitle.innerHTML = title;
+    }
+  },
+
+  _updPlaylist: function() {
+    var self = this;
+    for (var i=0; i<self.playlist.length; i++) {
+      var track = self.playlist[i];
+      var li = document.createElement('li');
+      li.className = 'list-track';
+      if (i === self.index) {
+        li.className += ' current-track';
+      }
+      if (self.showTrackNum) {
+        var ord = i + 1;
+        li.innerHTML = ord + '. ' + track.hdate + ' - ' + track.title;
+      } else {
+        li.innerHTML = track.hdate + ' - ' + track.title;
+      }
+      var savedIndex = i;
+      li.onclick = function() {
+        self.skipTo(savedIndex);
+      };
+      self.dom.playlist.appendChild(li);
     }
   },
 
@@ -340,9 +350,6 @@ Player.prototype = {
       self.playlist[self.index].howl.stop();
     }
 
-    // Reset progress.
-    self.dom.progress.style.width = '0%';
-
     // Play the new track.
     self.play(index);
   },
@@ -364,11 +371,10 @@ Player.prototype = {
     if (typeof Howler.volume === 'function') {
       vol = Howler.volume();
     }
-    var sliderHeight = self.dom.sliderBtn.clientHeight;
-    var travel = self.dom.volume.clientHeight - sliderHeight;
-    self.dom.sliderBtn.style.top = (
-      travel * (1 - vol)
-    ) + 'px';
+    var travel = self.dom.volumeActiveZone.clientHeight;
+    var barHeight = travel * vol;
+    self.dom.volumeBar.style.bottom = '0';
+    self.dom.volumeBar.style.height = barHeight + 'px';
   },
 
   /**
@@ -411,7 +417,7 @@ Player.prototype = {
     if (!track || !track.howl) {
       self.dom.timer.innerHTML = self.formatTime(null);
       self.dom.duration.innerHTML = self.formatTime(null);
-      self.dom.progress.style.width = '0%';
+      self.dom.progressBar.style.width = '0%';
       return;
     }
     
@@ -420,7 +426,7 @@ Player.prototype = {
     var seek = sound.seek() || 0;
     self.dom.timer.innerHTML = self.formatTime(Math.round(seek));
     self.dom.duration.innerHTML = self.formatTime(Math.round(sound.duration()));
-    self.dom.progress.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
+    self.dom.progressBar.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
   },
 
   /**
