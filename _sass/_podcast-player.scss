@@ -17,13 +17,13 @@ $float-controls-color: rgba(192, 192, 192, 1);
   margin-bottom: 1em;
   position: relative;
 
-  .progress {
+  .progressBar {
     width: 0%;
     height: $controls-height;
     background-color: $dark;
     z-index: -1;
   }
-  .progressOuter {
+  .progressFrame {
     border: $button-border;
     background-color: white;
   }
@@ -46,7 +46,7 @@ $float-controls-color: rgba(192, 192, 192, 1);
     padding-bottom: $button-border-width;
     display: inline-block;
   }
-  .list {
+  .playlist {
     right: 0;
     left: 0;
     max-height: 50vh;
@@ -72,7 +72,7 @@ $float-controls-color: rgba(192, 192, 192, 1);
     cursor: pointer;
   }
 
-  .volume {
+  .volumeFrame {
     display: none;
     position: absolute;
     height: 3 * $controls-height;
