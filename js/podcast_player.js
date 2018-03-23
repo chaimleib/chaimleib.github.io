@@ -88,7 +88,7 @@ var Player = function(playlist, currentFile, dom) {
   self._updTrackTitle();
   self._updPlaylist();
 
-  var sound = self.loadSound();
+  var sound = self.getSound();
 
   // Bind our player controls.
   self.dom.playBtn.addEventListener('click', self.play.bind(self));
@@ -187,84 +187,62 @@ function getTop(elem) {
   }
 
 Player.prototype = {
-  loadSound: function() {
+  loadSound: function(onload) {
+    console.log('loadSound');
     var self = this;
     var track = self.playlist[self.index];
-    if (track.sound) {
-      return track.sound;
-    }
-    var sound = track.howl = new Howl({
+    var defaultOnload = function() {
+      console.log('onload');
+      track.howl = this;
+      self._updBtns();
+      self._updProgress();
+      if (typeof onload === 'function') {
+        onload();
+      }
+    };
+    var sound = new Howl({
       src: [track.file + '.m4a'],
       // Force to HTML5 so that the audio can stream in (best for large
       // files). Makes Chrome act up under Webrick(?).
       html5: false,
-      onplay: function() {
-        // Start upating the progress of the track.
-        requestAnimationFrame(self.step.bind(self));
-
-        self.dom.pauseBtn.style.display = 'inline-block';
-        self.dom.playBtn.style.display = 'none';
-        self._updProgress();
-      },
-      onload: function() {
-        self.dom.loading.style.display = 'none';
-        self.dom.playBtn.style.display = 'inline-block';
-        self._updProgress();
-      },
+      onload: defaultOnload,
       onend: function() {
+        console.log('onend');
         if (self.index + 1 < self.playlist.length) {
           self.skip('right');
         }
       },
-      onpause: function() {
-        self.dom.playBtn.style.display = 'inline-block';
-        self.dom.pauseBtn.style.display = 'none';
-      },
-      onstop: function() {
-      },
-      onseek: function() {
-        console.log(this.seek());
-      }
     });
-    return sound;
+    track.howl = sound;
   },
+  
+  getSound: function(onload) {
+    var self = this;
+    var track = self.playlist[self.index];
+    if (!track.howl) {
+      track.howl = self.loadSound(onload);
+    } else {
+      onload();
+    }
+  },
+
   /**
    * Play a song in the playlist.
    * @param  {Number} index Index of the song in the playlist (leave empty to play the first or current).
    */
   play: function() {
     var self = this;
-
-    // Update the track display.
-    self._updTrackTitle();
-    self._updProgress();
-
-    // Begin playing the sound.
-    var sound = self.loadSound();
-
-    // Show the pause button.
-    if (sound.state() === 'loaded') {
-      sound.play();
-    } else {
-      console.log('could not load sound');
-    }
-    if (sound.playing()) {
-      self.dom.playBtn.style.display = 'none';
-      self.dom.pauseBtn.style.display = 'inline-block';
-    } else {
-      self.dom.loading.style.display = 'inline-block';
-      self.dom.playBtn.style.display = 'none';
-      self.dom.pauseBtn.style.display = 'none';
-      console.log('could not play loaded sound');
-    }
-
+    self.getSound(function() {
+      var track = self.playlist[self.index];
+      track.howl.play();
+      requestAnimationFrame(self.step.bind(self));
+    });
   },
   
   _updTrackTitle: function() {
     var self = this;
     var ord = self.index + 1;
     var track = self.playlist[self.index];
-    console.log(self.index);
     var title = track.hdate + ' - ' + track.title;
     if (self.showTrackNum) {
       self.dom.trackTitle.innerHTML = ord + '. ' + title;
@@ -301,16 +279,9 @@ Player.prototype = {
    */
   pause: function() {
     var self = this;
-
-    // Get the Howl we want to manipulate.
     var sound = self.playlist[self.index].howl;
-
-    // Puase the sound.
     sound.pause();
-
-    // Show the play button.
-    self.dom.playBtn.style.display = 'inline-block';
-    self.dom.pauseBtn.style.display = 'none';
+    self._updBtns();
   },
 
   /**
@@ -333,7 +304,6 @@ Player.prototype = {
         index = 0;
       }
     }
-
     self.skipTo(index);
   },
 
@@ -343,12 +313,9 @@ Player.prototype = {
    */
   skipTo: function(index) {
     var self = this;
-
-    // Stop the current track.
     if (self.playlist[self.index].howl) {
       self.playlist[self.index].howl.stop();
     }
-
     self.index = index;
     self.play();
   },
@@ -396,22 +363,18 @@ Player.prototype = {
    */
   step: function() {
     var self = this;
-
     self._updProgress();
-    
-    // Get the Howl we want to manipulate.
+    self._updBtns();
     var sound = self.playlist[self.index].howl;
     
     // If the sound is still playing, continue stepping.
-    if (sound.playing()) {
+    if (sound && sound.playing()) {
       requestAnimationFrame(self.step.bind(self));
     }
   },
   
   _updProgress: function() {
     var self = this;
-    
-    // Get the Howl we want to manipulate.
     var track = self.playlist[self.index];
     if (!track || !track.howl || track.howl.state() !== 'loaded') {
       self.dom.elapsed.innerHTML = self.formatTime(null);
@@ -426,6 +389,28 @@ Player.prototype = {
     self.dom.elapsed.innerHTML = self.formatTime(Math.round(seek));
     self.dom.duration.innerHTML = self.formatTime(Math.round(sound.duration()));
     self.dom.progressBar.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
+  },
+  
+  _updBtns: function() {
+    var self = this;
+    var track = self.playlist[self.index];
+    if (!track || !track.howl || track.howl.state() !== 'loaded') {
+      self.dom.playBtn.style.display = 'none';
+      self.dom.pauseBtn.style.display = 'none';
+      self.dom.loading.style.display = 'inline-block';
+      return;
+    }
+    var sound = track.howl;
+    if (sound.playing()) {
+      self.dom.playBtn.style.display = 'none';
+      self.dom.pauseBtn.style.display = 'inline-block';
+      self.dom.loading.style.display = 'none';
+      return;
+    }
+    //paused
+    self.dom.playBtn.style.display = 'inline-block';
+    self.dom.pauseBtn.style.display = 'none';
+    self.dom.loading.style.display = 'none';
   },
 
   /**
