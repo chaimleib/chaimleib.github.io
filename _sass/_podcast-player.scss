@@ -5,27 +5,30 @@ $button-border-width: 2px;
 $controls-bg-color: rgba(96, 96, 96, 1);
 $button-border-color: $controls-bg-color;
 $button-border: $button-border-width solid $button-border-color;
-$lrPadding: 4px;
+$lr-pad: 4px;
 $dark: rgba(50, 50, 50, 1);
 $disabled: rgba(192, 192, 192, 1);
 $float-controls-color: rgba(192, 192, 192, 1);
+$bar-bg: $dark;
+$bar-fg: white;
+$text-fg: white;
 
 .podcast-player {
   min-width: 300px;
   background: $controls-bg-color;
-  color: white;
+  color: $text-fg;
   margin-bottom: 1em;
   position: relative;
 
-  .progressBar {
-    width: 0%;
-    height: $controls-height;
-    background-color: $dark;
-    z-index: -1;
-  }
   .progressFrame {
     border: $button-border;
-    background-color: white;
+    background-color: $bar-bg;
+    .progressBar {
+      width: 0%;
+      height: $controls-height;
+      background-color: $bar-fg;
+      z-index: -1;
+    }
   }
   .loading {
     height: $controls-height;
@@ -38,8 +41,8 @@ $float-controls-color: rgba(192, 192, 192, 1);
     display: none;
   }
   .trackTitle {
-    padding-left: $lrPadding;
-    padding-right: $lrPadding;
+    padding-left: $lr-pad;
+    padding-right: $lr-pad;
     max-width: 100%;
     height: $controls-height;
     padding-top: $button-border-width;
@@ -58,8 +61,8 @@ $float-controls-color: rgba(192, 192, 192, 1);
     border: $button-border;
   }
   .list-track {
-    padding-left: $lrPadding;
-    padding-right: $lrPadding;
+    padding-left: $lr-pad;
+    padding-right: $lr-pad;
     text-decoration: underline;
     color: $dark;
   }
@@ -78,8 +81,20 @@ $float-controls-color: rgba(192, 192, 192, 1);
     height: 3 * $controls-height;
     width: $button-width;
     border: $button-border;
-    background-color: $controls-bg-color;
+    background: $bar-bg;
     text-align: center;
+    .volumeActiveZone {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      .volumeBar {
+        position: absolute;
+        background: $bar-fg;
+        width: 100%;
+        height: 0%;
+        bottom: 0;
+      }
+    }
   }
   .btn {
     height: $controls-height;

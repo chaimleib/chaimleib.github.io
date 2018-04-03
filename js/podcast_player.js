@@ -36,18 +36,6 @@ if (!Array.prototype.findIndex) {
   });
 }
 
-/*!
- *  Modified Howler.js Audio Player Demo
- *  howlerjs.com
- *
- *  (c) 2013-2018, James Simpson of GoldFire Studios
- *  goldfirestudios.com
- *
- *  MIT License
- *  
- *  Modified by Chaim Leib Halbert 2018
- */
-
 /**
  * Player class containing the state of our playlist and where we are in it.
  * Includes all methods for playing, skipping, updating the display, etc.
@@ -83,6 +71,9 @@ var Player = function(playlist, currentFile, dom) {
       self.dom[cls] = elm[0];
     }
   }
+  
+  self.volumeActive = false;
+  self.playlistActive = false;
   
   // set initial DOM state
   self._updTrackTitle();
@@ -128,6 +119,8 @@ var Player = function(playlist, currentFile, dom) {
     event.preventDefault();
     document.removeEventListener('mousemove', volumeChanged);
     document.removeEventListener('touchmove', volumeChanged);
+    document.removeEventListener('mouseup', endVolumeDrag);
+    document.removeEventListener('touchend', endVolumeDrag);
   };
   self.dom.volumeActiveZone.addEventListener('mousedown', startVolumeDrag);
   self.dom.volumeActiveZone.addEventListener('touchstart', startVolumeDrag);
@@ -154,6 +147,8 @@ var Player = function(playlist, currentFile, dom) {
     event.preventDefault();
     document.removeEventListener('mousemove', progressChanged);
     document.removeEventListener('touchmove', progressChanged);
+    document.removeEventListener('mouseup', endProgressDrag);
+    document.removeEventListener('touchend', endProgressDrag);
   };
   self.dom.progressActiveZone.addEventListener('mousedown', startProgressDrag);
   self.dom.progressActiveZone.addEventListener('touchstart', startProgressDrag);
