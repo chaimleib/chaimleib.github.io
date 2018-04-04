@@ -6,7 +6,7 @@ $controls-bg-color: rgba(96, 96, 96, 1);
 $button-border-color: $controls-bg-color;
 $button-border: $button-border-width solid $button-border-color;
 $lr-pad: 4px;
-$dark: rgba(50, 50, 50, 1);
+$dark: rgba(32, 32, 32, 1);
 $disabled: rgba(192, 192, 192, 1);
 $float-controls-color: rgba(192, 192, 192, 1);
 $bar-bg: $dark;
@@ -20,23 +20,6 @@ $text-fg: white;
   margin-bottom: 1em;
   position: relative;
 
-  .progressFrame {
-    border: $button-border;
-    background-color: $bar-bg;
-    .progressBar {
-      width: 0%;
-      height: $controls-height;
-      background-color: $bar-fg;
-      z-index: -1;
-    }
-  }
-  .loading {
-    height: $controls-height;
-    width: $button-width;
-    background: $disabled;
-    cursor: default;
-  }
-
   .playlist {
     display: none;
   }
@@ -48,6 +31,7 @@ $text-fg: white;
     padding-top: $button-border-width;
     padding-bottom: $button-border-width;
     display: inline-block;
+    cursor: pointer;
   }
   .playlist {
     right: 0;
@@ -75,18 +59,35 @@ $text-fg: white;
     cursor: pointer;
   }
 
+  // timeline/progress bar
+  .progressFrame {
+    border: $button-border;
+    .progressActiveZone {
+      cursor: pointer;
+      background-color: $bar-bg;
+      .progressBar {
+        width: 0%;
+        height: $controls-height;
+        background-color: $bar-fg;
+        z-index: -1;
+      }
+    }
+  }
+
+  // volume panel
   .volumeFrame {
     display: none;
     position: absolute;
     height: 3 * $controls-height;
     width: $button-width;
     border: $button-border;
-    background: $bar-bg;
     text-align: center;
     .volumeActiveZone {
-      position: relative;
-      height: 100%;
-      width: 100%;
+      position: relative; // because parent is not block-positioned
+      // width is full width, because display: block for divs
+      height: 100%; // because child has changing height
+      cursor: pointer;
+      background: $bar-bg;
       .volumeBar {
         position: absolute;
         background: $bar-fg;
@@ -96,6 +97,15 @@ $text-fg: white;
       }
     }
   }
+
+  .loading {
+    height: $controls-height;
+    width: $button-width;
+    background: $disabled;
+    cursor: default;
+  }
+
+  // buttons
   .btn {
     height: $controls-height;
     border: $button-border;
@@ -106,16 +116,16 @@ $text-fg: white;
   }
   .skippers {
     float: right;
-  }
-  .prevBtn {
-    display: none;
-    font-family: "Webdings";
-    width: $button-width;
-  }
-  .nextBtn {
-    display: none;
-    font-family: "Webdings";
-    width: $button-width;
+    .prevBtn {
+      display: none;
+      font-family: "Webdings";
+      width: $button-width;
+    }
+    .nextBtn {
+      display: none;
+      font-family: "Webdings";
+      width: $button-width;
+    }
   }
   .playBtn {
     display: none;
@@ -139,42 +149,6 @@ $text-fg: white;
     color: $controls-bg-color;
     border-radius: $button-width / 2;
     font-family: "Webdings";
-  }
-  
-  /* Fade-In */
-  .fadeout {
-    webkit-animation: fadeout 0.5s;
-    -ms-animation: fadeout 0.5s;
-    animation: fadeout 0.5s;
-  }
-  .fadein {
-    webkit-animation: fadein 0.5s;
-    -ms-animation: fadein 0.5s;
-    animation: fadein 0.5s;
-  }
-  @keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  @-webkit-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  @-ms-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  @keyframes fadeout {
-    from { opacity: 1; }
-    to   { opacity: 0; }
-  }
-  @-webkit-keyframes fadeout {
-    from { opacity: 1; }
-    to   { opacity: 0; }
-  }
-  @-ms-keyframes fadeout {
-    from { opacity: 1; }
-    to   { opacity: 0; }
   }
 }
 

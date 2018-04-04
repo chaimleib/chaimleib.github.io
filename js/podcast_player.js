@@ -97,7 +97,37 @@ var Player = function(playlist, currentFile, dom) {
     self.dom.prevBtn.style.display = 'none';
     self.dom.nextBtn.style.display = 'none';
   }
-  self.dom.volumeBtn.addEventListener('click', self.toggleVolume.bind(self));
+
+  // volume display on/off
+  self.fadeSpeed = 500;
+  self.dom.volumeFrame.style.transition = 'opacity ' + self.fadeSpeed + 'ms';
+  function volumeActivate() {
+    self.volumeActive = true;
+    self.dom.volumeFrame.style.display = 'block';
+    self.dom.volumeFrame.style.opacity = '1'; // instant, b/c disp block
+    self._updVolume();
+    document.addEventListener('mouseup', volumeDeactivate);
+    document.addEventListener('touchend', volumeDeactivate);
+  }
+  function volumeDeactivate() {
+    setTimeout(function() {
+      self.dom.volumeFrame.style.display = 'none';
+      self.volumeActive = false;
+    }, self.fadeSpeed);
+    self.dom.volumeFrame.style.opacity = '0';
+    document.removeEventListener('mouseup', volumeDeactivate);
+    document.removeEventListener('touchend', volumeDeactivate);
+  }
+  function volumeClicked(event) {
+    event.preventDefault();
+    if (self.volumeActive) {
+      volumeDeactivate();
+    } else {
+      volumeActivate();
+    }
+  }
+
+  self.dom.volumeBtn.addEventListener('click', volumeClicked);
 
   // volume drag
   var volumeChanged = function(event) {
@@ -110,10 +140,13 @@ var Player = function(playlist, currentFile, dom) {
   };
   var startVolumeDrag = function(event) {
     event.preventDefault();
+    volumeChanged(event);
     document.addEventListener('mousemove', volumeChanged);
     document.addEventListener('touchmove', volumeChanged);
     document.addEventListener('mouseup', endVolumeDrag);
     document.addEventListener('touchend', endVolumeDrag);
+    document.removeEventListener('mouseup', volumeDeactivate);
+    document.removeEventListener('touchend', volumeDeactivate);
   };
   var endVolumeDrag = function(event) {
     event.preventDefault();
@@ -121,6 +154,8 @@ var Player = function(playlist, currentFile, dom) {
     document.removeEventListener('touchmove', volumeChanged);
     document.removeEventListener('mouseup', endVolumeDrag);
     document.removeEventListener('touchend', endVolumeDrag);
+    document.addEventListener('mouseup', volumeDeactivate);
+    document.addEventListener('touchend', volumeDeactivate);
   };
   self.dom.volumeActiveZone.addEventListener('mousedown', startVolumeDrag);
   self.dom.volumeActiveZone.addEventListener('touchstart', startVolumeDrag);
@@ -421,21 +456,6 @@ Player.prototype = {
     }, (display === 'block') ? 0 : 500);
     self.dom.playlistFrame.classList.toggle('fadeout');
     self.dom.playlistFrame.classList.toggle('fadein');
-  },
-
-  /**
-   * Toggle the volume display on/off.
-   */
-  toggleVolume: function() {
-    var self = this;
-    var display = (self.dom.volumeFrame.style.display === 'block') ? 'none' : 'block';
-
-    setTimeout(function() {
-      self.dom.volumeFrame.style.display = display;
-      self._updVolume();
-    }, (display === 'block') ? 0 : 500);
-    self.dom.volumeFrame.classList.toggle('fadein');
-    self.dom.volumeFrame.classList.toggle('fadeout');
   },
 
   /**
