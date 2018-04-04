@@ -59,7 +59,7 @@ var Player = function(playlist, currentFile, dom) {
   var elms = [
     'trackTitle',
     'playlistBtn', 'playlistFrame', 'playlist',
-    'playBtn', 'pauseBtn', 'prevBtn', 'nextBtn', 'loading',
+    'playBtn', 'pauseBtn', 'skippers', 'prevBtn', 'nextBtn', 'loading',
     'volumeBtn', 'volumeFrame', 'volumeActiveZone', 'volumeBar',
     'progressFrame', 'progressActiveZone', 'progressBar',
     'elapsed', 'duration', 
@@ -86,16 +86,12 @@ var Player = function(playlist, currentFile, dom) {
   self.dom.pauseBtn.addEventListener('click', self.pause.bind(self));
   if (self.showTrackList) {
     self.dom.trackTitle.style['text-decoration'] = 'underline';
-    self.dom.prevBtn.style.display = 'inline-block';
-    self.dom.nextBtn.style.display = 'inline-block';
+    self.dom.skippers.style.display = 'inline-block';
     self.dom.playlistBtn.addEventListener('click', self.togglePlaylist.bind(self));
     self.dom.playlistFrame.addEventListener('click', self.togglePlaylist.bind(self));
-    self.dom.prevBtn.addEventListener('click', function() { self.skip('prev'); });
-    self.dom.nextBtn.addEventListener('click', function() { self.skip('next'); });
   } else {
     self.dom.trackTitle.style['text-decoration'] = 'none';
-    self.dom.prevBtn.style.display = 'none';
-    self.dom.nextBtn.style.display = 'none';
+    self.dom.skippers.style.display = 'none';
   }
 
   // volume display on/off

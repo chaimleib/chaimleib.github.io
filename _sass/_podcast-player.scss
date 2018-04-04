@@ -116,15 +116,15 @@ $text-fg: white;
   }
   .skippers {
     float: right;
-    .prevBtn {
-      display: none;
+    display: none;
+    a.prevBtn, a.nextBtn {
+      display: inline-block;
+      color: $text-fg;
       font-family: "Webdings";
       width: $button-width;
-    }
-    .nextBtn {
-      display: none;
-      font-family: "Webdings";
-      width: $button-width;
+      &:hover {
+        text-decoration: none;
+      }
     }
   }
   .playBtn {
