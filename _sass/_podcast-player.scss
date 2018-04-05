@@ -21,9 +21,6 @@ $text-fg: white;
   position: relative; // allow children to be absolutely positioned on me
   cursor: default; // text pointer is distracting between the buttons
 
-  .playlist {
-    display: none;
-  }
   .trackTitle {
     padding-left: $lr-pad;
     padding-right: $lr-pad;
@@ -34,30 +31,39 @@ $text-fg: white;
     display: inline-block;
     cursor: pointer;
   }
-  .playlist {
+  .playlistFrame {
+    display: none;
     right: 0;
     left: 0;
     max-height: 50vh;
+    min-height: 2 * $controls-height + 2 * $button-border-width;
     position: absolute;
     overflow-x: hidden;
     overflow-y: auto;
     text-overflow: ellipsis;
     background-color: $float-controls-color;
     border: $button-border;
-  }
-  .list-track {
-    padding-left: $lr-pad;
-    padding-right: $lr-pad;
-    text-decoration: underline;
-    color: $dark;
-  }
-  .current-track {
-    text-decoration: none;
-    font-weight: bold;
-    color: default;
-  }
-  .list-track:hover {
-    cursor: pointer;
+
+    .playlist { // ol or ul
+      margin-left: $lr-pad;
+      margin-right: $lr-pad;
+      margin-bottom: 0;
+      margin-top: 0;
+      list-style-type: none;
+      color: $dark;
+      a.list-track {
+        text-decoration: underline;
+        color: $dark;
+      }
+      .current-track {
+        text-decoration: none;
+        font-weight: bold;
+        color: $dark;
+      }
+      a.list-track:hover {
+        cursor: pointer;
+      }
+    }
   }
 
   // timeline/progress bar

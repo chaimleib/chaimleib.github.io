@@ -51,18 +51,11 @@ var Player = function(playlist, currentFile, dom) {
   // Bind our player controls.
   self.dom.playBtn.addEventListener('click', self.play.bind(self));
   self.dom.pauseBtn.addEventListener('click', self.pause.bind(self));
-  if (self.showTrackList) {
-    self.dom.trackTitle.style['text-decoration'] = 'underline';
-    self.dom.skippers.style.display = 'inline-block';
-    self.dom.playlistBtn.addEventListener('click', self.togglePlaylist.bind(self));
-    self.dom.playlistFrame.addEventListener('click', self.togglePlaylist.bind(self));
-  } else {
-    self.dom.trackTitle.style['text-decoration'] = 'none';
-    self.dom.skippers.style.display = 'none';
-  }
 
-  // volume display on/off
   self.fadeSpeed = 500;
+  /**
+   * Toggle the volume panel on/off.
+   */
   self.dom.volumeFrame.style.transition = 'opacity ' + self.fadeSpeed + 'ms';
   function volumeActivate() {
     self.volumeActive = true;
@@ -89,9 +82,7 @@ var Player = function(playlist, currentFile, dom) {
       volumeActivate();
     }
   }
-
   self.dom.volumeBtn.addEventListener('click', volumeClicked);
-
   // volume drag
   var volumeChanged = function(event) {
     event.preventDefault();
@@ -122,6 +113,45 @@ var Player = function(playlist, currentFile, dom) {
   };
   self.dom.volumeActiveZone.addEventListener('mousedown', startVolumeDrag);
   self.dom.volumeActiveZone.addEventListener('touchstart', startVolumeDrag);
+
+  /**
+   * Toggle the playlist display on/off.
+   */
+  self.dom.playlistFrame.style.transition = 'opacity ' + self.fadeSpeed + 'ms';
+  function playlistActivate() {
+    self.playlistActive = true;
+    self.dom.playlistFrame.style.display = 'block';
+    self.dom.playlistFrame.style.opacity = '1'; // instant, b/c disp block
+    document.addEventListener('mouseup', playlistDeactivate);
+    document.addEventListener('touchend', playlistDeactivate);
+  }
+  function playlistDeactivate() {
+    setTimeout(function() {
+      self.dom.playlistFrame.style.display = 'none';
+      self.playlistActive = false;
+    }, self.fadeSpeed);
+    self.dom.playlistFrame.style.opacity = '0';
+    document.removeEventListener('mouseup', playlistDeactivate);
+    document.removeEventListener('touchend', playlistDeactivate);
+  }
+  function playlistClicked(event) {
+    event.preventDefault();
+    if (self.playlistActive) {
+      playlistDeactivate();
+    } else {
+      playlistActivate();
+    }
+  }
+  if (self.showTrackList) {
+    self.dom.trackTitle.style['text-decoration'] = 'underline';
+    self.dom.trackTitle.style['cursor'] = 'pointer';
+    self.dom.skippers.style.display = 'inline-block';
+    self.dom.playlistBtn.addEventListener('click', playlistClicked);
+  } else {
+    self.dom.trackTitle.style['text-decoration'] = 'none';
+    self.dom.trackTitle.style['cursor'] = 'default';
+    self.dom.skippers.style.display = 'none';
+  }
 
   // progress drag
   var progressChanged = function(event) {
@@ -215,8 +245,9 @@ Player.prototype = {
       requestAnimationFrame(self.step.bind(self));
     });
   },
-  
+
   shouldAutostart: function() {
+    var self = this;
     var q = getParams(window.location.search);
     if (!q.hasOwnProperty('autostart')) {
       return false;
@@ -226,9 +257,10 @@ Player.prototype = {
       return self.id && q.autostart === self.id;
     }
   },
-  
+
   // After finishing this track, should we play the next track?
   shouldPlayAll: function() {
+    var self = this;
     return self.playAll && self.index + 1 < self.playlist.length;
   },
 
@@ -246,6 +278,7 @@ Player.prototype = {
 
   _updPlaylist: function() {
     var self = this;
+    self.dom.playlist.innerHTML = '';
     for (var i=0; i<self.playlist.length; i++) {
       var track = self.playlist[i];
       var li = document.createElement('li');
@@ -290,7 +323,7 @@ Player.prototype = {
       nextBtn.href = self.getTrackLink(next, self.playing());
     }
   },
-  
+
   playing: function() {
     var self = this;
     var track = self.playlist[self.index];
@@ -465,20 +498,6 @@ Player.prototype = {
     self.dom.playBtn.style.display = 'inline-block';
     self.dom.pauseBtn.style.display = 'none';
     self.dom.loading.style.display = 'none';
-  },
-
-  /**
-   * Toggle the playlist display on/off.
-   */
-  togglePlaylist: function() {
-    var self = this;
-    var display = (self.dom.playlistFrame.style.display === 'block') ? 'none' : 'block';
-
-    setTimeout(function() {
-      self.dom.playlistFrame.style.display = display;
-    }, (display === 'block') ? 0 : 500);
-    self.dom.playlistFrame.classList.toggle('fadeout');
-    self.dom.playlistFrame.classList.toggle('fadein');
   },
 
   /**
