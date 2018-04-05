@@ -14,11 +14,12 @@ $bar-fg: white;
 $text-fg: white;
 
 .podcast-player {
-  min-width: 300px;
+  min-width: 300px; // give controls and playlist display enough room
   background: $controls-bg-color;
   color: $text-fg;
   margin-bottom: 1em;
-  position: relative;
+  position: relative; // allow children to be absolutely positioned on me
+  cursor: default; // text pointer is distracting between the buttons
 
   .playlist {
     display: none;
@@ -27,7 +28,7 @@ $text-fg: white;
     padding-left: $lr-pad;
     padding-right: $lr-pad;
     max-width: 100%;
-    height: $controls-height;
+    min-height: $controls-height;
     padding-top: $button-border-width;
     padding-bottom: $button-border-width;
     display: inline-block;
@@ -124,6 +125,12 @@ $text-fg: white;
       width: $button-width;
       &:hover {
         text-decoration: none;
+      }
+      background: $disabled;
+      cursor: default;
+      &[href] {
+        background: $controls-bg-color;
+        cursor: pointer;
       }
     }
   }

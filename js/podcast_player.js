@@ -1,40 +1,3 @@
-// https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
-if (!Array.prototype.findIndex) {
-  Object.defineProperty(Array.prototype, 'findIndex', {
-    value: function(predicate) {
-     // 1. Let O be ? ToObject(this value).
-      if (this == null) {
-        throw new TypeError('"this" is null or not defined');
-      }
-      var o = Object(this);
-      // 2. Let len be ? ToLength(? Get(O, "length")).
-      var len = o.length >>> 0;
-      // 3. If IsCallable(predicate) is false, throw a TypeError exception.
-      if (typeof predicate !== 'function') {
-        throw new TypeError('predicate must be a function');
-      }
-      // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-      var thisArg = arguments[1];
-      // 5. Let k be 0.
-      var k = 0;
-      // 6. Repeat, while k < len
-      while (k < len) {
-        // a. Let Pk be ! ToString(k).
-        // b. Let kValue be ? Get(O, Pk).
-        // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-        // d. If testResult is true, return k.
-        var kValue = o[k];
-        if (predicate.call(thisArg, kValue, k, o)) {
-          return k;
-        }
-        // e. Increase k by 1.
-        k++;
-      }
-      // 7. Return -1.
-      return -1;
-    }
-  });
-}
 
 /**
  * Player class containing the state of our playlist and where we are in it.
@@ -48,6 +11,9 @@ var Player = function(playlist, currentFile, dom) {
   self.playlist = playlist;
   self.currentFile = currentFile;
   self.dom = {player: dom};
+  self.id = self.dom.player.id;
+  self.playAll = true;
+
   self.index = currentFile === undefined ?
     0 :
     playlist.findIndex(function(track) {
@@ -55,14 +21,14 @@ var Player = function(playlist, currentFile, dom) {
     }
   );
   self.showTrackNumber = self.showTrackList = self.playlist.length > 1;
-  
+
   var elms = [
     'trackTitle',
     'playlistBtn', 'playlistFrame', 'playlist',
     'playBtn', 'pauseBtn', 'skippers', 'prevBtn', 'nextBtn', 'loading',
     'volumeBtn', 'volumeFrame', 'volumeActiveZone', 'volumeBar',
     'progressFrame', 'progressActiveZone', 'progressBar',
-    'elapsed', 'duration', 
+    'elapsed', 'duration',
   ];
   for (var i=0; i<elms.length; i++) {
     var cls = elms[i];
@@ -71,13 +37,14 @@ var Player = function(playlist, currentFile, dom) {
       self.dom[cls] = elm[0];
     }
   }
-  
+
   self.volumeActive = false;
   self.playlistActive = false;
-  
+
   // set initial DOM state
   self._updTrackTitle();
   self._updPlaylist();
+  self._updSkippers();
 
   var sound = self.getSound();
 
@@ -183,7 +150,7 @@ var Player = function(playlist, currentFile, dom) {
   };
   self.dom.progressActiveZone.addEventListener('mousedown', startProgressDrag);
   self.dom.progressActiveZone.addEventListener('touchstart', startProgressDrag);
-  
+
   var resize = function() {
     self._updVolume();
     self._updProgress();
@@ -192,38 +159,20 @@ var Player = function(playlist, currentFile, dom) {
   window.addEventListener('resize', resize);
 };
 
-// https://stackoverflow.com/questions/5598743/finding-elements-position-relative-to-the-document
-function getLeft(elem) { // crossbrowser version
-    var box = elem.getBoundingClientRect();
-    var body = document.body;
-    var docEl = document.documentElement;
-    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var left = box.left + scrollLeft - clientLeft;
-    return left;
-}
-function getTop(elem) {
-    var box = elem.getBoundingClientRect();
-    var body = document.body;
-    var docEl = document.documentElement;
-    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-    var clientTop = docEl.clientTop || body.clientTop || 0;
-    var top  = box.top +  scrollTop - clientTop;
-    return top;
-  }
 
 Player.prototype = {
   loadSound: function(onload) {
-    console.log('loadSound');
     var self = this;
     var track = self.playlist[self.index];
     var defaultOnload = function() {
-      console.log('onload');
       track.howl = this;
       self._updBtns();
       self._updProgress();
       if (typeof onload === 'function') {
         onload();
+      }
+      if (self.shouldAutostart()) {
+        self.play();
       }
     };
     var sound = new Howl({
@@ -233,15 +182,16 @@ Player.prototype = {
       html5: false,
       onload: defaultOnload,
       onend: function() {
-        console.log('onend');
-        if (self.index + 1 < self.playlist.length) {
+        if (self.shouldPlayAll()) {
           self.skip('right');
+        } else {
+          self._updSkippers(); // hrefs to no autostart
         }
       },
     });
     track.howl = sound;
   },
-  
+
   getSound: function(onload) {
     var self = this;
     var track = self.playlist[self.index];
@@ -261,10 +211,27 @@ Player.prototype = {
     self.getSound(function() {
       var track = self.playlist[self.index];
       track.howl.play();
+      self._updSkippers(); // change hrefs to autostart
       requestAnimationFrame(self.step.bind(self));
     });
   },
   
+  shouldAutostart: function() {
+    var q = getParams(window.location.search);
+    if (!q.hasOwnProperty('autostart')) {
+      return false;
+    } else if (q.autostart === '') {
+      return true;
+    } else {
+      return self.id && q.autostart === self.id;
+    }
+  },
+  
+  // After finishing this track, should we play the next track?
+  shouldPlayAll: function() {
+    return self.playAll && self.index + 1 < self.playlist.length;
+  },
+
   _updTrackTitle: function() {
     var self = this;
     var ord = self.index + 1;
@@ -286,18 +253,64 @@ Player.prototype = {
       if (i === self.index) {
         li.className += ' current-track';
       }
+      var linkText;
       if (self.showTrackNum) {
         var ord = i + 1;
-        li.innerHTML = ord + '. ' + track.hdate + ' - ' + track.title;
+        linkText = ord + '. ' + track.hdate + ' - ' + track.title;
       } else {
-        li.innerHTML = track.hdate + ' - ' + track.title;
+        linkText = track.hdate + ' - ' + track.title;
       }
-      var savedIndex = i;
-      li.onclick = function() {
-        self.skipTo(savedIndex);
-      };
+      // TODO: linkText = escape(linkText);
+      if (i === self.index) {
+        li.innerHTML = linkText;
+      } else {
+        var a = document.createElement('a');
+        a.innerHTML = linkText;
+        a.href = self.getTrackLink(i, false);
+        li.appendChild(a);
+      }
       self.dom.playlist.appendChild(li);
     }
+  },
+
+  _updSkippers: function() {
+    var self = this;
+    var prev = self.getSkip('prev');
+    var next = self.getSkip('next');
+    var prevBtn = self.dom.prevBtn;
+    var nextBtn = self.dom.nextBtn;
+    if (prev === null) {
+      prevBtn.removeAttribute('href');
+    } else {
+      prevBtn.href = self.getTrackLink(prev, self.playing());
+    }
+    if (next === null) {
+      nextBtn.removeAttribute('href');
+    } else {
+      nextBtn.href = self.getTrackLink(next, self.playing());
+    }
+  },
+  
+  playing: function() {
+    var self = this;
+    var track = self.playlist[self.index];
+    return track && track.howl && track.howl.playing();
+  },
+
+  getTrackLink: function(i, autostart) {
+    var self = this;
+    if (i < 0 || i > self.playlist.length) {
+      return null;
+    }
+    var trackLink = self.playlist[i].file + '.html';
+    if (!autostart) {
+      return trackLink;
+    }
+    trackLink += '?autostart';
+    if (self.id) {
+      trackLink += '=' + encodeURIComponent(self.id);
+    }
+    return trackLink;
   },
 
   /**
@@ -308,6 +321,7 @@ Player.prototype = {
     var sound = self.playlist[self.index].howl;
     sound.pause();
     self._updBtns();
+    self._updSkippers(); // upd hrefs to no autostart
   },
 
   /**
@@ -316,21 +330,37 @@ Player.prototype = {
    */
   skip: function(direction) {
     var self = this;
+    var nextTrack = self.getSkip(direction, true);
+    self.skipTo(nextTrack);
+  },
 
-    // Get the next track based on the direction of the track.
-    var index = 0;
+  /**
+   * @param {String} direction 'next' or 'prev'
+   * @param {bool} shouldLoop allows skipping past the ends of self.playlist
+   * @return null if can't skip, else integer track index to skip to
+   */
+  getSkip: function(direction, shouldLoop) {
+    var self = this;
+    var index;
     if (direction === 'prev') {
       index = self.index - 1;
-      if (index < 0) {
-        index = self.playlist.length - 1;
+      if (index >= 0) {
+        return index;
+      } else if (shouldLoop) {
+        return self.playlist.length - 1;
+      } else {
+        return null;
       }
     } else {
       index = self.index + 1;
-      if (index >= self.playlist.length) {
-        index = 0;
+      if (index < self.playlist.length) {
+        return index;
+      } else if (shouldLoop) {
+        return 0;
+      } else {
+        return null;
       }
     }
-    self.skipTo(index);
   },
 
   /**
@@ -342,8 +372,7 @@ Player.prototype = {
     if (self.playlist[self.index].howl) {
       self.playlist[self.index].howl.stop();
     }
-    self.index = index;
-    self.play();
+    window.location = self.getTrackLink(index, true);
   },
 
   /**
@@ -355,7 +384,7 @@ Player.prototype = {
     Howler.volume(val);
     self._updVolume();
   },
-  
+
   _updVolume: function() {
     // Update the display on the slider.
     var self = this;
@@ -391,14 +420,13 @@ Player.prototype = {
     var self = this;
     self._updProgress();
     self._updBtns();
-    var sound = self.playlist[self.index].howl;
-    
+
     // If the sound is still playing, continue stepping.
-    if (sound && sound.playing()) {
+    if (self.playing()) {
       requestAnimationFrame(self.step.bind(self));
     }
   },
-  
+
   _updProgress: function() {
     var self = this;
     var track = self.playlist[self.index];
@@ -408,7 +436,7 @@ Player.prototype = {
       self.dom.progressBar.style.width = '0%';
       return;
     }
-    
+
     var sound = track.howl;
     // Determine our current seek position.
     var seek = sound.seek();
@@ -416,7 +444,7 @@ Player.prototype = {
     self.dom.duration.innerHTML = self.formatTime(Math.round(sound.duration()));
     self.dom.progressBar.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
   },
-  
+
   _updBtns: function() {
     var self = this;
     var track = self.playlist[self.index];
@@ -443,7 +471,6 @@ Player.prototype = {
    * Toggle the playlist display on/off.
    */
   togglePlaylist: function() {
-    console.log('togglePlaylist');
     var self = this;
     var display = (self.dom.playlistFrame.style.display === 'block') ? 'none' : 'block';
 
@@ -471,12 +498,91 @@ Player.prototype = {
 };
 
 // Cache references to DOM elements.
-var players = document.getElementsByClassName("podcast-player");
+var players = document.getElementsByClassName('podcast-player');
 window.podcast_players = [];
 for (var i = 0; i < players.length; i++) {
   var player = players[i];
-  var dataPlaylist = window[player.getAttribute("data-playlist")];
-  var dataCurrentFile = player.getAttribute("data-currentFile");
+  var dataPlaylist = window[player.getAttribute('data-playlist')];
+  var dataCurrentFile = player.getAttribute('data-currentFile');
   window.podcast_players.push(new Player(dataPlaylist, dataCurrentFile, player));
+}
+
+/**
+ * Polyfills and utilities
+ */
+// https://stackoverflow.com/questions/5598743/finding-elements-position-relative-to-the-document
+// Positioning
+function getLeft(elem) { // crossbrowser version
+  var box = elem.getBoundingClientRect();
+  var body = document.body;
+  var docEl = document.documentElement;
+  var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+  var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+  var left = box.left + scrollLeft - clientLeft;
+  return left;
+}
+function getTop(elem) {
+  var box = elem.getBoundingClientRect();
+  var body = document.body;
+  var docEl = document.documentElement;
+  var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+  var clientTop = docEl.clientTop || body.clientTop || 0;
+  var top  = box.top +  scrollTop - clientTop;
+  return top;
+}
+
+// https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
+if (!Array.prototype.findIndex) {
+  Object.defineProperty(Array.prototype, 'findIndex', {
+    value: function(predicate) {
+     // 1. Let O be ? ToObject(this value).
+      if (this == null) {
+        throw new TypeError('"this" is null or not defined');
+      }
+      var o = Object(this);
+      // 2. Let len be ? ToLength(? Get(O, "length")).
+      var len = o.length >>> 0;
+      // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+      if (typeof predicate !== 'function') {
+        throw new TypeError('predicate must be a function');
+      }
+      // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+      var thisArg = arguments[1];
+      // 5. Let k be 0.
+      var k = 0;
+      // 6. Repeat, while k < len
+      while (k < len) {
+        // a. Let Pk be ! ToString(k).
+        // b. Let kValue be ? Get(O, Pk).
+        // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+        // d. If testResult is true, return k.
+        var kValue = o[k];
+        if (predicate.call(thisArg, kValue, k, o)) {
+          return k;
+        }
+        // e. Increase k by 1.
+        k++;
+      }
+      // 7. Return -1.
+      return -1;
+    }
+  });
+}
+
+// Parse query strings to k-v map
+// Modified from https://stackoverflow.com/a/3855394/2687419
+function getParams(query) {
+  if (!query) {
+    return {};
+  }
+  return (/^[?#]/.test(query) ? query.slice(1) : query)
+    .split('&')
+    .reduce(function(params, param) {
+      var parts = param.split('=');
+      var key = parts[0];
+      var value = parts[1];
+      params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+      return params;
+    }, {});
 }
 
