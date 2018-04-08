@@ -12,6 +12,7 @@ $float-controls-color: rgba(192, 192, 192, 1);
 $bar-bg: $dark;
 $bar-fg: white;
 $text-fg: white;
+$icon-font: "Webdings";
 
 .podcast-player {
   min-width: 300px; // give controls and playlist display enough room
@@ -20,6 +21,7 @@ $text-fg: white;
   margin-bottom: 1em;
   position: relative; // allow children to be absolutely positioned on me
   cursor: default; // text pointer is distracting between the buttons
+  font-size: 0.65 * $controls-height;
 
   .trackTitle {
     padding-left: $lr-pad;
@@ -120,14 +122,26 @@ $text-fg: white;
     text-align: center;
     margin: 0;
     cursor: pointer;
+    
+    svg {
+      margin-top: 6px;
+      max-height: 0.5 * $button-width;
+      max-width: 0.8 * $button-width;
+      * {
+        fill: $text-fg;
+      }
+    }
   }
   .skippers {
     float: right;
     display: none;
+    svg {
+      max-width: 0.8 * $button-width;
+    }
     a.prevBtn, a.nextBtn {
       display: inline-block;
       color: $text-fg;
-      font-family: "Webdings";
+      font-family: $icon-font;
       width: $button-width;
       &:hover {
         text-decoration: none;
@@ -139,29 +153,23 @@ $text-fg: white;
         cursor: pointer;
       }
     }
+    .prevBtn {
+      transform: scale(-1, 1);
+    }
   }
   .playBtn {
     display: none;
-    font-family: "Webdings";
+    font-family: $icon-font;
     width: $button-width;
   }
   .pauseBtn {
     display: none;
-    font-family: "Webdings";
+    font-family: $icon-font;
     width: $button-width;
   }
   .volumeBtn {
-    font-family: "Webdings";
+    font-family: $icon-font;
     width: $button-width;
-  }
-  .sliderBtn {
-    position: absolute;
-    width: $button-width;
-    cursor: pointer;
-    background-color: white;
-    color: $controls-bg-color;
-    border-radius: $button-width / 2;
-    font-family: "Webdings";
   }
 }
 
