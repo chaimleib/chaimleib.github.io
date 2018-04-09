@@ -40,7 +40,10 @@
 		<itunes:explicit>no</itunes:explicit>
 {%- for track in tracks %}
 		<item>
-			<title>{{ track.title | xml_escape }}</title>
+			{%- capture title -%}
+			#{{ track.order }}: {{ track.hdate }} - {{ track.title }}
+			{%- endcapture %}
+			<title>{{ title | xml_escape }}</title>
 			<link>{{ track.url | absolute_url }}</link>
 			<pubDate>{{ track.date | date_to_rfc822 }}</pubDate>
 			<description>{{ track.excerpt | strip_html | strip | xml_escape }}</description>
@@ -53,7 +56,6 @@
 				/>
 			<itunes:author>{{ site.author | xml_escape }}</itunes:author>
 			<itunes:order>{{ track.order | xml_escape }}</itunes:order>
-			<itunes:subtitle>{{ track.hdate | xml_escape }}</itunes:subtitle>
 			<itunes:summary>{{ track.excerpt | strip_html | strip | xml_escape }}</itunes:summary>
 			<itunes:duration>{{ f.duration }}</itunes:duration>
 			<itunes:keywords>{{ track.keywords | join:", "}}</itunes:keywords>
