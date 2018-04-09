@@ -45,9 +45,9 @@
 			<pubDate>{{ track.date | date_to_rfc822 }}</pubDate>
 			<description>{{ track.excerpt | strip_html | strip | xml_escape }}</description>
 			{%- assign f = track.file | first %}
-			<guid isPermaLink="true">{{ series.url | absolute_url }}{{ track.name }}{{ f.ext }}</guid>
+			<guid isPermaLink="true">{{ track.url | absolute_url }}</guid>
 			<enclosure
-				url="{{ series.url | absolute_url }}{{ track.name }}{{ f.ext }}"
+				url="{{ series.url | absolute_url }}{{ track.name | uri_escape }}{{ f.ext }}"
 				length="{{ f.size }}"
 				type="{{ f.mime }}"
 				/>
@@ -57,7 +57,6 @@
 			<itunes:summary>{{ track.excerpt | strip_html | strip | xml_escape }}</itunes:summary>
 			<itunes:duration>{{ f.duration }}</itunes:duration>
 			<itunes:keywords>{{ track.keywords | join:", "}}</itunes:keywords>
-			<itunes:image href="{{ series.image | absolute_url }}" />
 			<itunes:explicit>{{ track.explicit }}</itunes:explicit>
 			<itunes:block>{{ track.block }}</itunes:block>
 		</item>
