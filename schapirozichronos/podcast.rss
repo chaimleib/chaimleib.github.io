@@ -29,8 +29,8 @@
 			<itunes:email>{{ site.email | xml_escape }}</itunes:email>
 		</itunes:owner>
 		<itunes:image href="{{ series.image | absolute_url }}" />
-		<itunes:category text="News & Politics">
-			<itunes:category text="Religion & Spirituality">
+		<itunes:category text="News &amp; Politics">
+			<itunes:category text="Religion &amp; Spirituality">
 				<itunes:category text="Judaism" />
 			</itunes:category>
 		</itunes:category>

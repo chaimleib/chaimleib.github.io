@@ -335,7 +335,7 @@ Player.prototype = {
     if (i < 0 || i > self.playlist.length) {
       return null;
     }
-    var trackLink = self.playlist[i].file + '.html';
+    var trackLink = self.playlist[i].page;
     if (!autostart) {
       return trackLink;
     }

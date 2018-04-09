@@ -10,6 +10,7 @@ window.playlist = [
 {% for track in site[page.collection] %}
   {
     "file": "{{ track.name }}",
+    "page": "{{ track.id }}.html",
     "hdate": "{{ track.hdate }}",
     "title": "{{ track.title }}"
   }{% unless forloop.last %},{% endunless %}
