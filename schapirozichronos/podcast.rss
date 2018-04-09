@@ -1,7 +1,7 @@
 ---
 ---
 {%- assign series = site.collections | where:"label","schapirozichronos" | first -%}
-{%- assign tracks = site.schapirozichronos | sort: 'name' -%}
+{%- assign tracks = site.schapirozichronos | sort: 'name' | reverse -%}
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xml:lang="{{ site.lang }}">
 	<channel>
@@ -54,7 +54,7 @@
 				type="{{ f.mime }}"
 				/>
 			<itunes:author>{{ site.author | xml_escape }}</itunes:author>
-			<itunes:order>{{ forloop.index }}</itunes:order>
+			<itunes:order>{{ forloop.rindex }}</itunes:order>
 			<itunes:summary>{{ track.excerpt | strip_html | strip | xml_escape }}</itunes:summary>
 			<itunes:duration>{{ f.duration }}</itunes:duration>
 			<itunes:keywords>{{ track.keywords | join:", "}}</itunes:keywords>
