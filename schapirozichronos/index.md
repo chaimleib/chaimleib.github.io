@@ -7,7 +7,7 @@ On 25 Menachem Av 5777, Rabbi Y. L. Schapiro began recording his memories (zichr
 
 ## Episodes
 
-{% assign tracks = site.schapirozichronos | sort: 'file' %}
+{% assign tracks = site.schapirozichronos | sort: 'name' %}
 <ol class="post-list">
 {% for track in tracks %}
   <li>

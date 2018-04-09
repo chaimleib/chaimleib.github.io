@@ -4,11 +4,12 @@ js:
 - "https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.9/howler.min.js"
 - "/js/podcast_player.js"
 ---
+{% assign col = site.collections | where:"label",page.collection | first %}
 <script>
 window.playlist = [
 {% for track in site[page.collection] %}
   {
-    "file": "{{ track.id }}",
+    "file": "{{ track.name }}",
     "hdate": "{{ track.hdate }}",
     "title": "{{ track.title }}"
   }{% unless forloop.last %},{% endunless %}
@@ -18,12 +19,12 @@ window.playlist = [
 <div class="post">
 
   <header class="post-header">
-    <h1 class="post-series"><a href="{{ page.seriesHome }}">{{ page.series }}</a></h1>
+    <h1 class="post-series"><a href="{{ col.url }}">{{ col.title }}</a></h1>
     <h2 class="post-title">{{ page.title }}</h2>
-    <p class="post-meta">{{ page.hdate }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %}</p>
+    <p class="post-meta">{{ page.hdate }}</p>
   </header>
   
-  {% include podcast_player.html playlist="playlist" file=page.id %}
+  {% include podcast_player.html playlist="playlist" file=page.name %}
 
   <article class="post-content">
     {{ content }}
