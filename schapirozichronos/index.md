@@ -20,3 +20,8 @@ On 25 Menachem Av 5777, [Rabbi Yehuda Leib Schapiro](https://www.chabad.org/sear
   </li>
 {% endfor %}
 </ol>
+
+## Contributing
+
+Help is welcome! If you would like to contribute to this project, please make a pull request to [this site on GitHub](https://github.com/chaimleib/chaimleib.github.io).
+
