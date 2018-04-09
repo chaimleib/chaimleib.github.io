@@ -4,10 +4,11 @@ js:
 - "https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.9/howler.min.js"
 - "/js/podcast_player.js"
 ---
-{% assign col = site.collections | where:"label",page.collection | first %}
+{%- assign col = site.collections | where:"label",page.collection | first %}
+{%- assign tracks = site[page.collection] | sort: 'name' %}
 <script>
 window.playlist = [
-{% for track in site[page.collection] %}
+{% for track in tracks %}
   {
     {%- assign f = track.file | first %}
     "file": "{{ track.name }}",
