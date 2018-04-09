@@ -55,7 +55,7 @@
 				type="{{ f.mime }}"
 				/>
 			<itunes:author>{{ site.author | xml_escape }}</itunes:author>
-			<itunes:order>{{ track.order | xml_escape }}</itunes:order>
+			<itunes:order>{{ forloop.index }}</itunes:order>
 			<itunes:summary>{{ track.excerpt | strip_html | strip | xml_escape }}</itunes:summary>
 			<itunes:duration>{{ f.duration }}</itunes:duration>
 			<itunes:keywords>{{ track.keywords | join:", "}}</itunes:keywords>
