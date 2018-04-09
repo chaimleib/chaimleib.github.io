@@ -52,6 +52,7 @@
 				type="{{ f.mime }}"
 				/>
 			<itunes:author>{{ site.author | xml_escape }}</itunes:author>
+      <itunes:order>{{ track.order | xml_escape }}</itunes:order>
 			<itunes:subtitle>{{ track.hdate | xml_escape }}</itunes:subtitle>
 			<itunes:summary>{{ track.excerpt | strip_html | strip | xml_escape }}</itunes:summary>
 			<itunes:duration>{{ f.duration }}</itunes:duration>
