@@ -45,7 +45,6 @@
 			{%- endcapture %}
 			<title>{{ title | xml_escape }}</title>
 			<link>{{ track.url | absolute_url }}</link>
-			<pubDate>{{ track.date | date_to_rfc822 }}</pubDate>
 			<description>{{ track.excerpt | strip_html | strip | xml_escape }}</description>
 			{%- assign f = track.file | first %}
 			<guid isPermaLink="true">{{ track.url | absolute_url }}</guid>
