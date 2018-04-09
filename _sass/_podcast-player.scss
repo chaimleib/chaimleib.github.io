@@ -45,6 +45,7 @@ $icon-font: "Webdings";
     text-overflow: ellipsis;
     background-color: $float-controls-color;
     border: $button-border;
+    z-index: 10;
 
     .playlist { // ol or ul
       margin-left: $lr-pad;
@@ -91,6 +92,7 @@ $icon-font: "Webdings";
     width: $button-width;
     border: $button-border;
     text-align: center;
+    z-index: 10;
     .volumeActiveZone {
       position: relative; // because parent is not block-positioned
       // width is full width, because display: block for divs
@@ -154,6 +156,7 @@ $icon-font: "Webdings";
       }
     }
     .prevBtn {
+      // transform creates z-index stacking context; floaters must have positive z
       transform: scale(-1, 1);
     }
   }
