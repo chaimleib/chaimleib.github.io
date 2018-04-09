@@ -9,10 +9,13 @@ js:
 window.playlist = [
 {% for track in site[page.collection] %}
   {
+    {%- assign f = track.file | first %}
     "file": "{{ track.name }}",
+    "ext": "{{ f.ext }}",
     "page": "{{ track.id }}.html",
     "hdate": "{{ track.hdate }}",
-    "title": "{{ track.title }}"
+    "title": "{{ track.title }}",
+    "order": "{{ track.order }}"
   }{% unless forloop.last %},{% endunless %}
 {% endfor %}
 ];
@@ -22,7 +25,7 @@ window.playlist = [
   <header class="post-header">
     <h1 class="post-series"><a href="{{ col.url }}">{{ col.title }}</a></h1>
     <h2 class="post-title">{{ page.title }}</h2>
-    <p class="post-meta">{{ page.hdate }}</p>
+    <p class="post-meta">#{{ page.order }}: {{ page.hdate }}</p>
   </header>
   
   {% include podcast_player.html playlist="playlist" file=page.name %}

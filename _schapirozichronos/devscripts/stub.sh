@@ -6,7 +6,7 @@ ext=".${f##*.}"
 order="${f%% *}"
 fbase="${f%$ext}"
 frest="${fbase#$order - }"
-title="${frest##* 5[0-9][0-9][0-9] }"
+title="${frest#* 5[0-9][0-9][0-9] }"
 hdate="${frest% $title}"
 
 # other tools

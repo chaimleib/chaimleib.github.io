@@ -206,7 +206,7 @@ Player.prototype = {
       }
     };
     var sound = new Howl({
-      src: [track.file + '.m4a'],
+      src: [track.file + track.ext],
       // Force to HTML5 so that the audio can stream in (best for large
       // files). Makes Chrome act up under Webrick(?).
       html5: false,
@@ -266,13 +266,18 @@ Player.prototype = {
 
   _updTrackTitle: function() {
     var self = this;
-    var ord = self.index + 1;
-    var track = self.playlist[self.index];
-    var title = track.hdate + ' - ' + track.title;
-    if (self.showTrackNum) {
-      self.dom.trackTitle.innerHTML = ord + '. ' + title;
+    self.dom.trackTitle.innerHTML = self.getTrackDisplayName(self.index);
+  },
+  
+  getTrackDisplayName: function(i) {
+    var self = this;
+    var track = self.playlist[i];
+    var title;
+    if (self.showTrackNumber) {
+      var ord = track.order;
+      return '#' + ord + ': ' + track.hdate + ' - ' + track.title;
     } else {
-      self.dom.trackTitle.innerHTML = title;
+      return track.hdate + ' - ' + track.title;
     }
   },
 
@@ -286,13 +291,7 @@ Player.prototype = {
       if (i === self.index) {
         li.className += ' current-track';
       }
-      var linkText;
-      if (self.showTrackNum) {
-        var ord = i + 1;
-        linkText = ord + '. ' + track.hdate + ' - ' + track.title;
-      } else {
-        linkText = track.hdate + ' - ' + track.title;
-      }
+      var linkText = self.getTrackDisplayName(i);
       // TODO: linkText = escape(linkText);
       if (i === self.index) {
         li.innerHTML = linkText;
