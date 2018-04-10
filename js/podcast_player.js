@@ -40,6 +40,7 @@ var Player = function(playlist, currentFile, dom) {
 
   self.volumeActive = false;
   self.playlistActive = false;
+  self.shouldScrollPlaylist = true;
 
   // set initial DOM state
   self._updTrackTitle();
@@ -124,6 +125,17 @@ var Player = function(playlist, currentFile, dom) {
     self.dom.playlistFrame.style.opacity = '1'; // instant, b/c disp block
     document.addEventListener('mouseup', playlistDeactivate);
     document.addEventListener('touchend', playlistDeactivate);
+    // scroll to current track
+    if (!self.shouldScrollPlaylist) {
+      return;
+    }
+    self.shouldScrollPlaylist = false;
+    setTimeout(function() {
+      var currentTrack = self.dom.playlist.getElementsByClassName('current-track')[0];
+      var frame = self.dom.playlistFrame;
+      var targetY = currentTrack.offsetTop + (currentTrack.clientHeight - frame.clientHeight) / 6;
+      frame.scrollTop = targetY;
+    }, 0);
   }
   function playlistDeactivate() {
     setTimeout(function() {
