@@ -28,6 +28,9 @@ duration_frac="${duration_total##*.}"
 duration_total_int="${duration_total%.$duration_frac}"
 duration_m=$(( $duration_total_int / 60 ))
 duration_s=$(( $duration_total_int - $duration_m * 60 ))
+if [ "$duration_s" -lt 10 ]; then
+    duration_s=0"$duration_s"
+fi
 cat << EOF
 ---
 name: "$fbase"
