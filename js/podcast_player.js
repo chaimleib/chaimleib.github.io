@@ -500,8 +500,8 @@ Player.prototype = {
     var sound = track.howl;
     // Determine our current seek position.
     var seek = sound.seek();
-    self.dom.elapsed.innerHTML = self.formatTime(Math.round(seek));
-    self.dom.duration.innerHTML = self.formatTime(Math.round(sound.duration()));
+    self.dom.elapsed.innerHTML = self.formatTime(Math.floor(seek));
+    self.dom.duration.innerHTML = self.formatTime(Math.floor(sound.duration()));
     self.dom.progressBar.style.width = (((seek / sound.duration()) * 100) || 0) + '%';
   },
 
