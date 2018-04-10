@@ -152,6 +152,22 @@ var Player = function(playlist, currentFile, dom) {
     self.dom.trackTitle.style['cursor'] = 'default';
     self.dom.skippers.style.display = 'none';
   }
+  var startPlaylistDrag = function(event) {
+    event.preventDefault();
+    document.addEventListener('mouseup', endPlaylistDrag);
+    document.addEventListener('touchend', endPlaylistDrag);
+    document.removeEventListener('mouseup', playlistDeactivate);
+    document.removeEventListener('touchend', playlistDeactivate);
+  };
+  var endPlaylistDrag = function(event) {
+    event.preventDefault();
+    document.removeEventListener('mouseup', endPlaylistDrag);
+    document.removeEventListener('touchend', endPlaylistDrag);
+    document.addEventListener('mouseup', playlistDeactivate);
+    document.addEventListener('touchend', playlistDeactivate);
+  };
+  self.dom.playlistFrame.addEventListener('mousedown', startPlaylistDrag);
+  self.dom.playlistFrame.addEventListener('touchstart', startPlaylistDrag);
 
   // progress drag
   var progressChanged = function(event) {
