@@ -165,14 +165,12 @@ var Player = function(playlist, currentFile, dom) {
     self.dom.skippers.style.display = 'none';
   }
   var startPlaylistDrag = function(event) {
-    event.preventDefault();
     document.addEventListener('mouseup', endPlaylistDrag);
     document.addEventListener('touchend', endPlaylistDrag);
     document.removeEventListener('mouseup', playlistDeactivate);
     document.removeEventListener('touchend', playlistDeactivate);
   };
   var endPlaylistDrag = function(event) {
-    event.preventDefault();
     document.removeEventListener('mouseup', endPlaylistDrag);
     document.removeEventListener('touchend', endPlaylistDrag);
     document.addEventListener('mouseup', playlistDeactivate);
