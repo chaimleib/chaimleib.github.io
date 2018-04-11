@@ -1,5 +1,10 @@
 #!/bin/bash
 f="$1"
+d="$2"
+preserveUncertainDate=
+[[ "$d" == '-d'* ]] && preserveUncertainDate=y
+
+mdn="${f%% *}.md"
 fb="$(basename "$f")"
 
 # from filename
@@ -14,9 +19,13 @@ hdate="${frest% $title}"
 ffprobe="$(ffprobe -v quiet -show_streams -print_format json "$f")"
 date="$(echo "$ffprobe" | jq '.streams[0].tags.creation_time' -r)"
 datefmt='%Y-%m-%dT%H:%M:%SZ'
-if [ "$date" == null ]; then
-    creation="$(gstat --printf="%w" "$f")"
-    date="$(gdate -u +"$datefmt" -d "$creation")"
+if [[ "$date" == null ]]; then
+    if [[ -n "$preserveUncertainDate" ]] && [[ -f "$mdn" ]]; then
+        date="$(yq r "$mdn" date)"
+    else
+        creation="$(gstat --printf="%w" "$f")"
+        date="$(gdate -u +"$datefmt" -d "$creation")"
+    fi
 fi
 mime="$(file --mime-type "$f")"
 mime="${mime##*: }"
