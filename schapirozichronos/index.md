@@ -8,6 +8,8 @@ published: true
 {%- assign col = site.collections | where:"label","schapirozichronos" | first %}
 On 25 Menachem Av 5777, [Rabbi Yehuda Leib Schapiro](https://www.chabad.org/search/keyword_cdo/kid/13269/jewish/Yehuda-Leib-Schapiro.htm) began recording his memories (zichronos) of the Lubavitcher Rebbe. Acting on his express permission to redistribute his recordings ([Episode 1]({{ site.schapirozichronos[0].url }})), I am working on converting his series to [podcast format]({{ col.url | absolute_url }}podcast.rss).
 
+If you are using an iPad or iPhone, make sure that the silent mode switch on your device is off. Otherwise, the audio will not play.
+
 ## Episodes
 
 {% assign tracks = site.schapirozichronos | sort: 'name' %}
