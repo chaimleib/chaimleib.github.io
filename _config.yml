@@ -1,12 +1,9 @@
 # Site settings
 title: Chaim Leib Halbert
+ogTitle: Chaim Leib
 author: Chaim Leib Halbert
 email: chaim.leib.halbert@gmail.com
-description: > # this means to ignore newlines until "baseurl:"
-  <ul>Other blogs:
-      <li><a href='https://manhacking.blogspot.com/'>man hacking</a></li>
-      <li><a href='https://unlabeledjew.blogspot.com/'>Unlabeled Jew</a></li>
-  </ul>
+description: Chaim Leib's personal website
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "https://chaimleib.github.io" # the base hostname & protocol for your site
 lang: en
@@ -33,6 +30,10 @@ collections:
 defaults:
   - scope:
       path: ""
+    values:
+      ogType: article
+  - scope:
+      path: ""
       type: schapirozichronos
     values:
       layout: podcast
@@ -44,4 +45,5 @@ defaults:
         duration: "00:00"
       explicit: no
       block: no
+      description: Rabbi Y.L. Schapiro's stories of the Lubavitcher Rebbe.
 
