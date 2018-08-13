@@ -4,6 +4,11 @@ def this_dir
   File.expand_path File.dirname(__FILE__)
 end
 
+# Where the podcast audio lives
+def audio_dir
+  File.dirname this_dir
+end
+
 def main
   first, last, *rest = ARGV
   unless first
@@ -13,12 +18,13 @@ def main
   puts episodes(audio_files, first, last)
 end
 
+# List all audio files
 def audio_files
-  audio_dir = File.dirname this_dir
   Dir.chdir audio_dir
   Dir.glob '*.m??'
 end
 
+# Jekyll page stub with YAML front matter and Markdown content
 def stub fname
   <<~EOS
     ---
@@ -28,19 +34,23 @@ def stub fname
   EOS
 end
 
+# Create Jekyll front matter YAML
 def regen_front fname
   ext = File.extname fname
   order = ep_id_str fname
   
 end
 
+# Read the Markdown content from the given Jekyll page file
 def content fname
 end
 
+# Filter the given list to the episode range [first, last]
 def episodes(list, first, last)
   list.select {|ep| episode_in_range?(ep, first, last)}
 end
 
+# Whether the given episode is in the range [first, last]
 def episode_in_range?(fname, first, last)
   fnum = first.to_i 
   lnum = last ? last.to_i : Float::INFINITY
@@ -101,18 +111,21 @@ def ep_id episode
   [num.to_i, letter, rest]
 end
 
+# Given an audio file name beginning with an episode id, returns the
+# corresponding Jekyll page file name.
 def md_name fname
   "#{ep_id_str fname}.md"
 end
 
+# Concatenate the 0-padded episode number and letter together, e.g. 0032a
 def ep_id_str fname
   num, letter = ep_id fname
   "#{pad_ep_num num}#{letter}"
 end
 
+# Add 0-padding to episode nums
 def pad_ep_num num
   sprintf('%04d', num)
 end
 
 main
-
