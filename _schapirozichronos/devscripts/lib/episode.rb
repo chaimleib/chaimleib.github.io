@@ -1,6 +1,7 @@
 class Episode
+  include Comparable
   def initialize name
-    @int_part, @letter_part = parse name
+    @int_part, @letter_part = self.class.parse name
   end
 
   attr_reader :int_part
@@ -10,6 +11,22 @@ class Episode
   def id
     padded = sprintf('%04d', int_part)
     "#{padded}#{letter_part}"
+  end
+
+  def <=>(other)
+    begin
+      if @int_part == other.int_part
+        if @letter_part.length == other.letter_part.length
+          @letter_part <=> other.letter_part
+        else
+          @letter_part.length <=> other.letter_part.length
+        end
+      else
+        @int_part <=> other.int_part
+      end
+    rescue
+      nil
+    end
   end
 
   # Given a string beginning with an episode id, return the int and letter parts
