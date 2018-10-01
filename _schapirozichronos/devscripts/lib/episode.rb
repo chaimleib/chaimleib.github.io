@@ -2,10 +2,12 @@ class Episode
   include Comparable
   def initialize name
     @int_part, @letter_part = self.class.parse name
+    @orig = name
   end
 
   attr_reader :int_part
   attr_reader :letter_part
+  attr_reader :orig
 
   # Concatenate the 0-padded episode number and letter together, e.g. 0032a
   def id
