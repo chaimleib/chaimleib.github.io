@@ -30,9 +30,10 @@ end
 
 # Create Jekyll front matter YAML
 def regen_front ep
-  ext = File.extname ep.orig
+  f = ep.orig
+  ext = File.extname f
   order = ep.id
-  base = ep.orig.chomp ext #fsx
+  base = f.chomp ext #fsx
   frest = base.split(order + " - ").pop
   title = frest.split(/ 5[0-9][0-9][0-9] /).pop
   hdate = frest.split(" "+title).shift
@@ -43,15 +44,36 @@ def regen_front ep
   # puts "frest #{frest}"
   # puts "title #{title}"
   # puts "hdate #{hdate}"
-  ffprobeJSON = `ffprobe -v quiet -show_streams -print_format json "#{ep.orig}"`
+  ffprobeJSON = `ffprobe -v quiet -show_streams -print_format json "#{f}"`
   ffprobe = JSON.parse ffprobeJSON
 
-  date = ffprobe['streams'].shift['tags']['creation_time']
+  date = ffprobe['streams'][0]['tags']['creation_time']
   unless date
-    mdYAML = YAML.parse(md_name ep.orig)
-    date = mdYAML['date']
+    mdYAML = File.read(md_name f)
+    md = YAML.parse myYAML
+    # if preserveUncertainDate
+    date = md['date']
+    # else
+    # date = File.birthtime f
+    # end
   end
   puts date
+  mime = MimeMagic.by_magic(File.open f)
+  size = File.size(f)
+  duration_total = ffprobe['streams'][0]['duration'].to_f
+  duration_m, duration_s = duration_total.divmod 60
+  duration_str = sprintf('%d:%02d', duration_m, duration_s)
+  <<~END
+  name: "#{base}"
+  order: "#{order}"
+  date: "#{date}"
+  hdate: "#{hdate}"
+  title: "#{title}"
+  keywords: []
+  file:
+  - ext: "#{ext}"
+    mime: "#{mime}"
+  END
 end
 
 # Read the Markdown content from the given Jekyll page file
