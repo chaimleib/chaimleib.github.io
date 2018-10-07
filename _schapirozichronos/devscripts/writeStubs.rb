@@ -19,13 +19,14 @@ def audio_files
   Dir.glob '*.m??'
 end
 
-# Jekyll page stub with YAML front matter and Markdown content
-def stub fname
+# Given an episode, return the Jekyll page stub with YAML front matter and
+# Markdown content
+def stub ep
   <<~EOS
     ---
-    #{regen_front fname}
+    #{regen_front ep}
     ---
-    #{content fname}
+    #{content ep.md_file if File.exists? ep.md_file}
   EOS
 end
 
@@ -48,7 +49,7 @@ def regen_front ep
   ffprobeJSON = `ffprobe -v quiet -show_streams -print_format json "#{f}"`
   ffprobe = JSON.parse ffprobeJSON
 
-  date = get_date(f, ffprobe)
+  date = get_date(ep, ffprobe)
   mime = MimeMagic.by_magic(File.open f)
   size = File.size(f)
   duration_total = ffprobe['streams'][0]['duration'].to_f
@@ -70,12 +71,12 @@ def regen_front ep
   END
 end
 
-def get_date(fname, ffprobe, preserveMarkdownDate=true)
-  ff_date = ffprobe['streams'][0]['tags']['creation_time']
+def get_date(ep, ffprobe, preserveMarkdownDate=true)
+  ff_date = ffprobe&.[]('streams')&.[](0)&.[]('tags')&.[]('creation_time')
   return ff_date if ff_date
   if preserveMarkdownDate
-    mdYAML = File.read(md_name fname)
-    md = YAML.parse myYAML
+    mdYAML = File.read(ep.md_file)
+    md = YAML.load mdYAML
     return md['date'] if md['date']
   end
   fmt = '%Y-%m-%dT%H:%M%SZ'
@@ -112,7 +113,7 @@ def main
     usage
   end
   last = first unless last
-  episodes(audio_files, first, last).map{|e| puts content e.md_file}
+  episodes(audio_files, first, last).map{|e| puts stub e}
 end
 
 main
