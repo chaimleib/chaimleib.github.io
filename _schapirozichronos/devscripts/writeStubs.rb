@@ -2,6 +2,7 @@
 require_relative 'lib/episode.rb'
 require 'json'
 require 'yaml'
+require 'mimemagic'
 
 def this_dir
   File.expand_path File.dirname(__FILE__)
@@ -47,23 +48,13 @@ def regen_front ep
   ffprobeJSON = `ffprobe -v quiet -show_streams -print_format json "#{f}"`
   ffprobe = JSON.parse ffprobeJSON
 
-  date = ffprobe['streams'][0]['tags']['creation_time']
-  unless date
-    mdYAML = File.read(md_name f)
-    md = YAML.parse myYAML
-    # if preserveUncertainDate
-    date = md['date']
-    # else
-    # date = File.birthtime f
-    # end
-  end
-  puts date
+  date = get_date(f, ffprobe)
   mime = MimeMagic.by_magic(File.open f)
   size = File.size(f)
   duration_total = ffprobe['streams'][0]['duration'].to_f
   duration_m, duration_s = duration_total.divmod 60
   duration_str = sprintf('%d:%02d', duration_m, duration_s)
-  <<~END
+  puts <<~END
   name: "#{base}"
   order: "#{order}"
   date: "#{date}"
@@ -73,15 +64,35 @@ def regen_front ep
   file:
   - ext: "#{ext}"
     mime: "#{mime}"
+    size: #{size}
+    duration: "#{duration_str}"
+  published: true
   END
 end
+
+def get_date(fname, ffprobe, preserveMarkdownDate=true)
+  ff_date = ffprobe['streams'][0]['tags']['creation_time']
+  if ff_date
+    return ff_date
+  end
+  if preserveMarkdownDate
+    mdYAML = File.read(md_name fname)
+    md = YAML.parse myYAML
+    if md['date']
+      return md['date']
+    end
+  end
+  fmt = '%Y-%m-%dT%H:%M%SZ'
+  File.birthtime(fname).strftime fmt
+end
+
 
 # Read the Markdown content from the given Jekyll page file
 def content fname
 end
 
 # Given an audio file name beginning with an episode id, returns the
-# corresponding Jekyll page file name.
+# corresponding Jekyll page file name
 def md_name fname
   "#{ep_id_str fname}.md"
 end
@@ -102,6 +113,9 @@ def main
   unless first
     puts 'need first episode'
     usage
+  end
+  unless last
+    last = first
   end
   episodes(audio_files, first, last).map{|e| regen_front e}
 end
