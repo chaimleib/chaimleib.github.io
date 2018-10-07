@@ -54,7 +54,7 @@ def regen_front ep
   duration_total = ffprobe['streams'][0]['duration'].to_f
   duration_m, duration_s = duration_total.divmod 60
   duration_str = sprintf('%d:%02d', duration_m, duration_s)
-  puts <<~END
+  <<~END
   name: "#{base}"
   order: "#{order}"
   date: "#{date}"
@@ -72,15 +72,11 @@ end
 
 def get_date(fname, ffprobe, preserveMarkdownDate=true)
   ff_date = ffprobe['streams'][0]['tags']['creation_time']
-  if ff_date
-    return ff_date
-  end
+  return ff_date if ff_date
   if preserveMarkdownDate
     mdYAML = File.read(md_name fname)
     md = YAML.parse myYAML
-    if md['date']
-      return md['date']
-    end
+    return md['date'] if md['date']
   end
   fmt = '%Y-%m-%dT%H:%M%SZ'
   File.birthtime(fname).strftime fmt
@@ -89,12 +85,13 @@ end
 
 # Read the Markdown content from the given Jekyll page file
 def content fname
-end
-
-# Given an audio file name beginning with an episode id, returns the
-# corresponding Jekyll page file name
-def md_name fname
-  "#{ep_id_str fname}.md"
+  sep_count = 0
+  lines = []
+  File.open(fname).each do |l|
+    lines.push l if sep_count >= 2
+    sep_count += 1 if l.chomp == '---'
+  end
+  lines.join ""
 end
 
 def episodes(files, first, last)
@@ -114,10 +111,8 @@ def main
     puts 'need first episode'
     usage
   end
-  unless last
-    last = first
-  end
-  episodes(audio_files, first, last).map{|e| regen_front e}
+  last = first unless last
+  episodes(audio_files, first, last).map{|e| puts content e.md_file}
 end
 
 main

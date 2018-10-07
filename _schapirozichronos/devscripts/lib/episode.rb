@@ -15,6 +15,11 @@ class Episode
     "#{padded}#{letter_part}"
   end
 
+  # The corresponding Jekyll page file name
+  def md_file
+    "#{id}.md"
+  end
+
   def <=>(other)
     begin
       if @int_part == other.int_part
