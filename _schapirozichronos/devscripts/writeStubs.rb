@@ -40,12 +40,6 @@ def regen_front ep
   title = frest.split(/ 5[0-9][0-9][0-9] /).pop
   hdate = frest.split(" "+title).shift
 
-  # puts "ext #{ext}"
-  # puts "order #{order}"
-  # puts "base #{base}"
-  # puts "frest #{frest}"
-  # puts "title #{title}"
-  # puts "hdate #{hdate}"
   ffprobeJSON = `ffprobe -v quiet -show_streams -print_format json "#{f}"`
   ffprobe = JSON.parse ffprobeJSON
 
@@ -95,25 +89,75 @@ def content fname
   lines.join ""
 end
 
-def episodes(files, first, last)
-  parsed = files.map{|f| Episode.new f}.sort
-  parsedFirst = Episode.new first
-  highpass = parsed.select{|e| e >= parsedFirst}
-  filtered = highpass
-  if last
-    parsedLast = Episode.new last
-    lowpass = highpass.select{|e| e <= parsedLast}
+def dupes eps
+  by_id = {}
+  eps.each do |e|
+    if by_id.key? e.id
+      by_id[e.id].push e
+    else
+      by_id[e.id] = [e]
+    end
+  end
+  results = []
+  by_id.select{|k, v| v.length > 1}.each_pair do |k, dupe_ary|
+    results.push "#{k}:"
+    dupe_ary.each{|e| results.push "  #{e.orig}"}
+  end
+  if results.length > 0
+    results.join "\n"
+  else
+    "No duplicates."
   end
 end
 
-def main
-  first, last, *rest = ARGV
-  unless first
-    puts 'need first episode'
-    usage
+def episodes(files, first, last)
+  parsed = files.map{|f| Episode.new f}.sort
+  if first
+    parsedFirst = Episode.new first
+    highpass = parsed.select{|e| e >= parsedFirst}
+  else
+    highpass = parsed
   end
-  last = first unless last
-  episodes(audio_files, first, last).map{|e| puts stub e}
+  if last
+    parsedLast = Episode.new last
+    lowpass = highpass.select{|e| e <= parsedLast}
+  else
+    lowpass = highpass
+  end
+end
+
+def usage
+  puts "Usage:"
+  puts "    #{$PROGRAM_NAME} VERB [FIRST [LAST]]"
+  puts ""
+  puts "VERB:"
+  puts "    list - print the audio files"
+  puts "    stub - write markdown files for the audio files"
+  puts "    dupes - print files with colliding episode IDs in their name"
+  puts ""
+  puts "[FIRST [LAST]]:"
+  puts "    These are episode IDs, like '2' or '13a'."
+  puts ""
+end
+
+def main
+  verb, first, last, *rest = ARGV
+  eps = episodes(audio_files, first, last)
+  case verb
+  when 'list'
+    eps.map{|e| puts e.orig}
+  when 'stub'
+    eps.each do |e|
+      eStub = stub e
+      File.open(e.md_file, 'w') {|f| f.write eStub}
+    end
+  when 'dupes'
+    puts dupes eps
+  else
+    puts `Unknown verb "#{verb}"`
+    usage
+    exit 1
+  end
 end
 
 main
