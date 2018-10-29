@@ -2,12 +2,14 @@ GEM
   remote: https://rubygems.org/
   specs:
     mimemagic (0.3.2)
+    rubyzip (1.2.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   mimemagic
+  rubyzip
 
 BUNDLED WITH
    1.16.1
