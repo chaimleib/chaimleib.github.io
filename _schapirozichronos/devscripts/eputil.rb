@@ -94,7 +94,7 @@ def content fname
   lines.join ""
 end
 
-def dupes eps
+def fix_dupes eps
   by_id = {}
   eps.each do |e|
     if by_id.key? e.id
@@ -103,8 +103,68 @@ def dupes eps
       by_id[e.id] = [e]
     end
   end
-  results = []
-  by_id.select{|k, v| v.length > 1}
+  results = by_id.select{|_, idEps| idEps.length > 1}
+  suggest = {}
+  unsure = []
+  results.each_pair do |id, idEps|
+    haaros = []
+    nonHaaros = []
+    idEps.each do |ep|
+      ext = File.extname ep.orig
+      base = ep.orig.chomp ext #fsx
+      frest = base.split(ep.id + " - ").pop
+      title = frest.split(/ 5[0-9][0-9][0-9] /, 2).pop
+      if title.include? "Ha'ara"
+        haaros.push ep
+      else
+        nonHaaros.push ep
+      end
+    end
+    if nonHaaros.length != 1
+      unsure.push id
+    else
+      haaros = haaros.sort_by do |ep|
+        ffprobe = probe_media ep.orig
+        get_date(ep, ffprobe)
+      end
+      subID = 'a'
+      haaros.each do |ep|
+        frest = ep.orig.split(ep.id + " - ").pop
+        dir = File.dirname ep.orig
+        newFpath = "#{dir}/#{ep.id}#{subID} - #{frest}"
+        suggest[ep.orig] = newFpath
+        subID = subID.succ
+      end
+    end
+  end
+  # UI stage
+  if results.length == 0
+    puts 'No duplicates.'
+    return
+  end
+  if unsure.length > 0
+    puts "Unsure which is the main episode for these IDs:"
+    unsure.each do |id|
+      puts "  #{id}:"
+      results[id].each{ |ep| puts "    #{ep.orig}" }
+    end
+  end
+  if suggest.length > 0
+    suggest.each_pair do |f, newF|
+      puts "  #{f} => #{newF}"
+    end
+    puts "Apply the above renames [y/N]? "
+    case $stdin.gets.chomp
+    when 'y'
+      puts 'Renaming...'
+      suggest.each_pair do |oldF, newF|
+        File.rename oldF, newF
+      end
+      puts 'Done.'
+    else
+      puts 'Doing nothing.'
+    end
+  end
 end
 
 def fix_ext files
@@ -241,15 +301,8 @@ def main
       File.open(e.md_file, 'w') {|f| f.write eStub}
     end
   when 'dupes'
-    d = dupes eps
-    if d.length == 0
-      puts 'No duplicates.'
-      exit 0
-    end
-    d.each_pair do |k, dupe_ary|
-      puts "#{k}:"
-      dupe_ary.each{|e| puts "  #{e.orig}"}
-    end
+    fix_dupes eps
+
   when 'ext'
     if first or last
       puts 'No FIRST or LAST arg for ext'
