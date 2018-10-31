@@ -78,7 +78,7 @@ def get_date(ep, ffprobe, preserveMarkdownDate=true)
     md = YAML.load mdYAML
     return md['date'] if md['date']
   end
-  fmt = '%Y-%m-%dT%H:%M%SZ'
+  fmt = '%Y-%m-%dT%H:%M:%SZ'
   File.birthtime(ep.orig).strftime fmt
 end
 
