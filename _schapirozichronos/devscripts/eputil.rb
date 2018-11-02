@@ -169,7 +169,7 @@ end
 
 def fix_ext files
   suggest = {}
-  files.select{|f| File.file? f}.sort.each do |f|
+  files.sort.each do |f|
     expExt, mime = identify f
     if !f.end_with? expExt
       oldExt = File.extname f
@@ -178,6 +178,10 @@ def fix_ext files
       puts "  #{f} => #{newF}"
       suggest[f] = newF
     end
+  end
+  if suggest.length == 0
+    puts 'Doing nothing.'
+    return
   end
   puts "Apply the above renames [y/N]? "
   case $stdin.gets.chomp
@@ -259,7 +263,15 @@ def identify file
 end
 
 def episodes(files, first, last)
-  parsed = files.map{|f| Episode.new f}.sort
+  parsed = files.each_with_object([]) do |f, result|
+    begin
+      e = Episode.new f
+      return result << e
+    rescue
+      return result
+    end
+  end
+  parsed.sort!
   if first
     parsedFirst = Episode.new first
     highpass = parsed.select{|e| e >= parsedFirst}
@@ -291,25 +303,29 @@ end
 
 def main
   verb, first, last, *rest = ARGV
-  eps = episodes(audio_files, first, last)
+
   case verb
   when 'list'
+    eps = episodes(audio_files, first, last)
     eps.map{|e| puts e.orig}
+
   when 'stub'
+    eps = episodes(audio_files, first, last)
     eps.each do |e|
       eStub = stub e
       File.open(e.md_file, 'w') {|f| f.write eStub}
     end
+
   when 'dupes'
+    eps = episodes(audio_files, first, last)
     fix_dupes eps
 
   when 'ext'
-    if first or last
-      puts 'No FIRST or LAST arg for ext'
-      exit 1
-    end
     Dir.chdir audio_dir
-    fix_ext Dir.glob '*'
+    files = Dir.glob '*'
+    eps = episodes(files, first, last).map{|e| e.orig}
+    fix_ext eps
+
   else
     puts `Unknown verb "#{verb}"`
     usage
