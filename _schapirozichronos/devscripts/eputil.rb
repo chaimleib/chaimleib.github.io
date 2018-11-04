@@ -266,9 +266,10 @@ def episodes(files, first, last)
   parsed = files.each_with_object([]) do |f, result|
     begin
       e = Episode.new f
-      return result << e
+      result << e
+      result
     rescue
-      return result
+      result
     end
   end
   parsed.sort!
@@ -324,6 +325,9 @@ def main
     Dir.chdir audio_dir
     files = Dir.glob '*'
     eps = episodes(files, first, last).map{|e| e.orig}
+    if eps.length == 0
+      puts "no files!"
+    end
     fix_ext eps
 
   else
