@@ -1,15 +1,8 @@
 <footer class="site-footer">
-
   <div class="wrapper">
     <div class="footer-col-wrapper">
-      <div class="footer-col  footer-col-1">
-        <ul class="contact-list">
-          <li>{{ site.title }}</li>
-          <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
-        </ul>
-      </div>
 
-      <div class="footer-col  footer-col-2">
+      <div class="footer-col  footer-col-1">
         <ul class="social-media-list">
           {% if site.github_username %}
           <li>
@@ -39,17 +32,28 @@
             </a>
           </li>
           {% endif %}
+
+          <li>
+            <a href="mailto:{{ site.email }}">
+              <span class="icon icon--char">@</span>
+              {{ site.email }}
+            </a>
+          </li>
         </ul>
       </div>
 
-      <div class="footer-col  footer-col-3">
-        <ul>Other blogs:
+      <div class="footer-col  footer-col-2">
+        <ul class="related-sites-list">Chaim's blogs:
             <li><a href='https://manhacking.blogspot.com/'>man hacking</a></li>
             <li><a href='https://unlabeledjew.blogspot.com/'>Unlabeled Jew</a></li>
         </ul>
       </div>
+
+      <div class="footer-col copyright">
+        &copy; 2014-{{ "now" | date : "%Y" }} {{ site.author }}.
+        All rights reserved.
+      </div>
+
     </div>
-
   </div>
-
 </footer>
