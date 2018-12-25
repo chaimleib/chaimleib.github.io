@@ -7,7 +7,7 @@ published: true
 # {{ page.title }}
 
 {%- assign col = site.collections | where:"label","seligsonzichronos" | first %}
-Rabbi M. Seligson, who had close contact with the Lubavitcher Rebbe for much of his nesius, has been recording an audio series of his memories of the Rebbe. At his request, I am working on converting his series to [podcast format]({{ col.url | absolute_url }}podcast.rss).
+Rabbi M. Seligson, who had close contact with the Lubavitcher Rebbe for much of his nesius, has been recording an audio series of his memories of the Rebbe. With his consent, I am working on converting his series to [podcast format]({{ col.url | absolute_url }}podcast.rss).
 
 If you are using an iPad or iPhone, make sure that the silent mode switch on your device is off. Otherwise, the audio will not play.
 
