@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Rabbi Schapiro's Zichronos"
-description: "Rabbi Y.L. Schapiro's stories of the Lubavitcher Rebbe."
+description: "Rabbi Yehuda Leib Schapiro's stories of the Lubavitcher Rebbe."
 published: true
 ---
 # {{ page.title }}
