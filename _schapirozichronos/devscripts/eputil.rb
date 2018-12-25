@@ -269,7 +269,8 @@ def episodes(files, first, last)
       result << e
       result
     rescue
-      result
+      puts "Skipping #{f}"
+      result # continue building list of Episodes, skip this one
     end
   end
   parsed.sort!
@@ -283,7 +284,7 @@ def episodes(files, first, last)
     parsedLast = Episode.new last
     lowpass = highpass.select{|e| e <= parsedLast}
   else
-    lowpass = highpass
+    highpass
   end
 end
 
