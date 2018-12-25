@@ -58,7 +58,7 @@ defaults:
         duration: "00:00"
       explicit: no
       block: no
-      description: Rabbi Y.L. Schapiro's stories of the Lubavitcher Rebbe.
+      description: Rabbi Yehuda Leib Schapiro's memories of the Lubavitcher Rebbe.
   - scope:
       path: ""
       type: seligsonzichronos
@@ -72,5 +72,5 @@ defaults:
         duration: "00:00"
       explicit: no
       block: no
-      description: Rabbi M. Seligson's stories of the Lubavitcher Rebbe.
+      description: Rabbi Michoel Seligson's memories of the Lubavitcher Rebbe.
 
