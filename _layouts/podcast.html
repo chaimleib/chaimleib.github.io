@@ -5,7 +5,7 @@ js:
 - "/js/podcast_player.js"
 ---
 {%- assign col = site.collections | where:"label",page.collection | first %}
-{%- assign tracks = site[page.collection] | sort: 'name' %}
+{%- assign tracks = site[page.collection] | sort: 'order' %}
 <script>
 window.playlist = [
 {% for track in tracks %}
@@ -26,7 +26,7 @@ window.playlist = [
   <header class="post-header">
     <h1 class="post-series"><a href="{{ col.url }}">{{ col.title }}</a></h1>
     <h2 class="post-title">{{ page.title }}</h2>
-    <p class="post-meta">#{{ page.order }}: {{ page.hdate }}</p>
+    <p class="post-meta">#{{ page.order }}{% if page.hdate %}: {{ page.hdate }}{% endif %}</p>
   </header>
   
   {% include podcast_player.html playlist="playlist" file=page.name %}

@@ -299,12 +299,16 @@ Player.prototype = {
     var self = this;
     var track = self.playlist[i];
     var title;
+    var ord = track.order;
+    var dispName = '';
     if (self.showTrackNumber) {
-      var ord = track.order;
-      return '#' + ord + ': ' + track.hdate + ' - ' + track.title;
-    } else {
-      return track.hdate + ' - ' + track.title;
+      dispName += '#' + ord + ': ';
     }
+    if (track.hdate) {
+      dispName += track.hdate + ' - ';
+    }
+    dispName += track.title;
+    return dispName;
   },
 
   _updPlaylist: function() {
