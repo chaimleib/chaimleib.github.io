@@ -1,7 +1,7 @@
 ---
 ---
 {%- assign series = site.collections | where:"label","seligsonzichronos" | first -%}
-{%- assign tracks = site.seligsonzichronos | sort: 'order' | reverse -%}
+{%- assign tracks = site.seligsonzichronos | sort: 'order' -%}
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xml:lang="{{ site.lang }}">
 	<channel>
@@ -12,16 +12,16 @@
 		<language>{{ site.lang }}</language>
 		<managingEditor>{{ site.email | xml_escape}} ({{ site.author | xml_escape }})</managingEditor>
 		<webMaster>{{ site.email | xml_escape }} ({{ site.author | xml_escape }})</webMaster>
-		<copyright>2018-{{ site.time | date:"%Y" }} {{ site.title | xml_escape }}</copyright>
+		<copyright>2018-{{ site.time | date:"%Y" }} Michoel Seligson</copyright>
 		<pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
 		<lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
-    {%- if series.image %}
+    {% if series.image -%}
 		<image>
 			<link>{{ series.url | absolute_url }}</link>
 			<url>{{ series.image | absolute_url }}</url>
 			<title>{{ series.title | xml_escape }}</title>
 		</image>
-    {% endif -%}
+    {%- endif %}
 		<itunes:subtitle>{{ series.description | xml_escape }}</itunes:subtitle>
 		<itunes:author>{{ site.author | xml_escape }}</itunes:author>
 		<itunes:summary>{{ series.description | strip_html | strip | xml_escape }}</itunes:summary>
@@ -43,8 +43,8 @@
 {%- for track in tracks %}
 		<item>
 			{%- capture title -%}
-			#{{ track.order }}: {{ track.title }}
-			{%- endcapture -%}
+			#{{ track.order }}: {% if track.hdate %}{{ track.hdate }} - {% endif %}{{ track.title }}
+			{%- endcapture %}
 			<title>{{ title | xml_escape }}</title>
 			<link>{{ track.url | absolute_url }}</link>
 			<description>{{ track.excerpt | strip_html | strip | xml_escape }}</description>
