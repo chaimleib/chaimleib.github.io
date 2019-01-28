@@ -3,6 +3,7 @@ require_relative 'lib/episode.rb'
 require 'json'
 require 'yaml'
 require 'mimemagic'
+require 'shellwords'
 require 'zip'
 
 def this_dir
@@ -33,7 +34,7 @@ def stub ep
 end
 
 def probe_media file
-  ffprobeJSON = `ffprobe -v quiet -show_streams -print_format json "#{file}"`
+  ffprobeJSON = `ffprobe -v quiet -show_streams -print_format json #{file.shellescape}`
   ffprobe = JSON.parse ffprobeJSON
 end
 
@@ -43,7 +44,7 @@ def regen_front ep
   ext = File.extname f
   order = ep.id
   base = f.chomp ext #fsx
-  frest = base.split(order + " - ").pop
+  frest = base.split("#{ep.int_part}#{ep.letter_part}) ").pop
   title = frest.split(/ 5[0-9][0-9][0-9] /, 2).pop
   hdate = frest.split(" "+title).shift
   ffprobe = probe_media f
@@ -201,6 +202,7 @@ def identify file
     'application/pdf' => '.pdf',
     'application/xml' => '.webloc',
     'image/jpeg' => '.jpg',
+    'application/msword' => '.doc',
     # 'video/mp4' => '.mp4', # more id needed, sometimes this is just audio
     # nil => '.md', # more id needed, maybe just plain text
     # 'application/zip' # maybe docx
@@ -251,6 +253,7 @@ def identify file
     elsif audio
       return ['.m4a', 'audio/x-m4a'] if audio.include? 'AAC'
       return ['.mp3', 'audio/mp3'] if audio.include? 'MP3'
+      return ['.ogg', 'audio/ogg'] if audio.include? 'Opus' or audio.include? 'Vorbis'
       puts "Unknown mime #{mime}"
       puts "  and audio codec #{audio}"
       puts "  for file #{file}"
@@ -260,6 +263,38 @@ def identify file
 
   puts "Unknown mime: #{mime}"
   puts "  for file: #{file}"
+end
+
+def convert_format(files)
+  suggest = {}
+  files.sort_by{|e| e.id}.each do |f|
+    _, mime = identify f.orig
+    case mime
+    when 'audio/ogg'
+      oldExt = File.extname f.orig
+      oldMinusExt = f.orig[0, f.orig.length - oldExt.length]
+      newF = "#{oldMinusExt}.m4a"
+      if not File.exists? newF
+        suggest[f.orig] = newF
+        puts "  #{f.orig} => #{newF}"
+      end
+    end
+  end
+  if suggest.length == 0
+    puts 'Doing nothing.'
+    return
+  end
+  puts "Convert the above media files [y/N]? "
+  case $stdin.gets.chomp
+  when 'y'
+    puts 'Converting...'
+    suggest.each_pair do |oldF, newF|
+      `ffmpeg -i #{oldF.shellescape} #{newF.shellescape}`
+    end
+    puts 'Done.'
+  else
+    puts 'Doing nothing.'
+  end
 end
 
 def episodes(files, first, last)
@@ -294,9 +329,10 @@ def usage
   puts ""
   puts "VERB:"
   puts "    list - print the audio files"
-  puts "    stub - write markdown files for the audio files"
   puts "    dupes - print files with colliding episode IDs in their name"
   puts "    ext - suggest file extension corrections"
+  puts "    convert - convert media files to supported formats"
+  puts "    stub - write markdown files for the audio files"
   puts ""
   puts "[FIRST [LAST]]:"
   puts "    These are episode IDs, like '2' or '13a'."
@@ -311,13 +347,6 @@ def main
     eps = episodes(audio_files, first, last)
     eps.map{|e| puts e.orig}
 
-  when 'stub'
-    eps = episodes(audio_files, first, last)
-    eps.each do |e|
-      eStub = stub e
-      File.open(e.md_file, 'w') {|f| f.write eStub}
-    end
-
   when 'dupes'
     eps = episodes(audio_files, first, last)
     fix_dupes eps
@@ -330,6 +359,19 @@ def main
       puts "no files!"
     end
     fix_ext eps
+
+  when 'convert'
+    Dir.chdir audio_dir
+    files = Dir.glob '*'
+    eps = episodes(files, first, last)
+    convert_format eps
+
+  when 'stub'
+    eps = episodes(audio_files, first, last)
+    eps.each do |e|
+      eStub = stub e
+      File.open(e.md_file, 'w') {|f| f.write eStub}
+    end
 
   else
     puts `Unknown verb "#{verb}"`
