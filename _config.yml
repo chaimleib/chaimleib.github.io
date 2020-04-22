@@ -15,13 +15,21 @@ markdown: kramdown
 
 
 collections:
+  audio:
+    output: true
+    title: "Audio"
+    description: Audio that Chaim created.
+    url: /audio/
+    keywords:
+      - audio
+      - recording
   schapirozichronos:
     output: true
     title: "Rabbi Schapiro's Zichronos"
     description: Rabbi Yehuda Leib Schapiro tells his zichronos of the Lubavitcher Rebbe.
     url: /schapirozichronos/
     image: /schapirozichronos/image.jpg
-    keywords: 
+    keywords:
       - zichronos
       - chassidus
       - rebbe
@@ -33,7 +41,7 @@ collections:
     title: "Rabbi Seligson's Zichronos"
     description: Rabbi Michoel Seligson tells his zichronos of the Lubavitcher Rebbe.
     url: /seligsonzichronos/
-    keywords: 
+    keywords:
       - zichronos
       - chassidus
       - rebbe
@@ -45,6 +53,20 @@ defaults:
       path: ""
     values:
       ogType: article
+  - scope:
+      path: ""
+      type: audio
+    values:
+      layout: podcast
+      name: "track"
+      file:
+      - ext: .m4a
+        length: -1
+        mime: audio/x-m4a
+        duration: "00:00"
+      explicit: no
+      block: no
+      description: Audio that Chaim created.
   - scope:
       path: ""
       type: schapirozichronos
