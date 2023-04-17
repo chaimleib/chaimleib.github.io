@@ -3,7 +3,7 @@
   <meta charset="utf-8"/>
   <meta name="generator" content="pandoc"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
-  <meta name="revised" content="Chaim Halbert, 2023-04-14 16:49-0700"/>
+  <meta name="revised" content="Chaim Halbert, 2023-04-17 09:46-0700"/>
   <title>Chaim Halbert</title>
   <style>
     code{white-space: pre-wrap;}
@@ -43,14 +43,23 @@
       position: absolute;
       display: inline-block;
       right: 10px;
-      top: 10px;
+      top: 4px;
       font-family: &quot;Times New Roman&quot;, &quot;Times&quot;, serif;
     }
+
+    #revision {
+      position: absolute;
+      display: inline-block;
+      left: 10px;
+      top: 8px; /* using same top value as #bsd looks misaligned */
+      font-size: 10px;
+    }
+
 
     h1 {
       text-align: center;
       margin-top: 0;
-      margin-bottom: 8px;
+      margin-bottom: 0;
     }
 
     h2 {
@@ -104,7 +113,7 @@
 <div class="content">
 <header id="title-block-header">
 <h1 class="title">Chaim Halbert</h1>
-</header>
+</header><div id="revision">Revision 2023-04-17 09:46-0700</div>
 <div id="bsd" dir="rtl">
 בס״ד
 </div>
@@ -172,18 +181,20 @@ and FlowScript (7 yrs), Java (13 yrs), C (17 yrs), PHP (14 yrs) MySQL
 Swift, Matlab, Octave, Verilog, Visual Basic .Net, Lua, ladder logic,
 PLC structured text/IEC 61131-3, Scheme, LISP.</em> Can write parallel
 and concurrent code. Creates <em>parsers, compilers and
-interpreters</em> for new mini-languages. &gt;50 languages.</p>
+interpreters</em> for new mini-languages. &gt;50 languages; learns new
+ones quickly.</p>
 <p><strong>Web technologies</strong>: Full stack web and cloud
 development using <em>GCP (7 yrs) and AWS (2 yrs); MySQL (13 yrs), NoSQL
 (8 yrs), React (7 yrs), Angular (1 yr), jQuery (13 yrs), Webpack (8
-yrs), npm/yarn (8 yrs), Docker (7 yrs), Kubernetes (1 yr), ElasticSearch
-(1 yr), Redis (1 yr), CouchDB (1 yr), SRE (7 yrs), Datadog (6 yrs),
-PagerDuty (on-call 4 yrs).</em></p>
-<p><strong>Team process and systems engineering</strong>: Designs
-long-lasting build systems and cloud apps, and procedures for the
-problem and the team, some of which have been battle-tested for six
-years and are still going strong. Seeks out feedback for improvements to
-training, tooling and architecture.</p>
+yrs), npm/yarn (8 yrs), Docker (7 yrs), Django (1 yr), Flask (1 yr),
+Kubernetes (1 yr), ElasticSearch (1 yr), Redis (1 yr), CouchDB (1 yr),
+SRE (7 yrs), Datadog (6 yrs), PagerDuty (on-call 4 yrs).</em></p>
+<p><strong>Systems architect</strong>: Designs long-lasting build
+systems and cloud apps, and procedures for the problem and the team,
+some of which have been battle-tested for six years and are still going
+strong. Willing to break from convention for the sake of simpler,
+nimbler code. Seeks out feedback for improvements to training, tooling
+and architecture.</p>
 <p><strong>Security and privacy</strong>: Catches potential attack
 vectors at code review. Protects coworkers’ and customers’ privacy as a
 matter of deep personal conviction to “do no harm,” while allowing the
@@ -203,9 +214,9 @@ timeseries visualization and regression curves, principal component
 analysis, neural networks. <em>Google StackDriver, Google BigQuery,
 Splunk, awk, Gnuplot, Python, Matlab, Octave, LabView, MaxMSP</em></p>
 <p><strong>Other</strong>: Uses Arch Linux as daily driver. This resume
-was written in vim using Markdown, and rendered using a Makefile and a
-Python DOM manipulation script. 3D printing, using self-designed models
-in Blender and FreeCAD.</p>
+was written in vim using Markdown, and rendered using a Makefile,
+pandoc, headless Chrome, and a Python DOM manipulation script. 3D
+printing, using self-designed models in Blender and FreeCAD.</p>
 <h2 id="work-experience">Work experience</h2>
 <h3 id="cloud-software-engineer-evernote-june-2016---february-2023-redwood-city-ca-four-years-then-remote-in-phoenix-az">Cloud
 Software Engineer, Evernote <small>(June 2016 - February 2023; Redwood
