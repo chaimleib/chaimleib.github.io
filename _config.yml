@@ -36,18 +36,6 @@ collections:
       - chabad
       - lubavitch
       - schapiro
-  seligsonzichronos:
-    output: true
-    title: "Rabbi Seligson's Zichronos"
-    description: Rabbi Michoel Seligson tells his zichronos of the Lubavitcher Rebbe.
-    url: /seligsonzichronos/
-    keywords:
-      - zichronos
-      - chassidus
-      - rebbe
-      - chabad
-      - lubavitch
-      - seligson
 defaults:
   - scope:
       path: ""
@@ -81,18 +69,4 @@ defaults:
       explicit: no
       block: no
       description: Rabbi Yehuda Leib Schapiro's memories of the Lubavitcher Rebbe.
-  - scope:
-      path: ""
-      type: seligsonzichronos
-    values:
-      layout: podcast
-      name: "track"
-      file:
-      - ext: .m4a
-        length: -1
-        mime: audio/x-m4a
-        duration: "00:00"
-      explicit: no
-      block: no
-      description: Rabbi Michoel Seligson's memories of the Lubavitcher Rebbe.
 
