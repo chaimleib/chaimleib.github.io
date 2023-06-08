@@ -23,19 +23,6 @@ collections:
     keywords:
       - audio
       - recording
-  schapirozichronos:
-    output: true
-    title: "Rabbi Schapiro's Zichronos"
-    description: Rabbi Yehuda Leib Schapiro tells his zichronos of the Lubavitcher Rebbe.
-    url: /schapirozichronos/
-    image: /schapirozichronos/image.jpg
-    keywords:
-      - zichronos
-      - chassidus
-      - rebbe
-      - chabad
-      - lubavitch
-      - schapiro
 defaults:
   - scope:
       path: ""
@@ -55,18 +42,4 @@ defaults:
       explicit: no
       block: no
       description: Audio that Chaim created.
-  - scope:
-      path: ""
-      type: schapirozichronos
-    values:
-      layout: podcast
-      name: "track"
-      file:
-      - ext: .m4a
-        length: -1
-        mime: audio/x-m4a
-        duration: "00:00"
-      explicit: no
-      block: no
-      description: Rabbi Yehuda Leib Schapiro's memories of the Lubavitcher Rebbe.
 
