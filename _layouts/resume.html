@@ -3,7 +3,7 @@
   <meta charset="utf-8"/>
   <meta name="generator" content="pandoc"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
-  <meta name="revised" content="Chaim Halbert, 2023-06-07 19:33-0700"/>
+  <meta name="revised" content="Chaim Halbert, 2024-03-18 13:09-0700"/>
   <title>Chaim Halbert</title>
   <style>
     code{white-space: pre-wrap;}
@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type=&quot;checkbox&quot;] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -113,7 +116,7 @@
 <div class="content">
 <header id="title-block-header">
 <h1 class="title">Chaim Halbert</h1>
-</header><div id="revision">Revision 2023-06-07 19:33-0700</div>
+</header><div id="revision">Revision 2024-03-18 13:09-0700</div>
 <div id="bsd" dir="rtl">
 בס״ד
 </div>
@@ -173,10 +176,10 @@ local to area or remote</h4>
 </ul>
 <h2 id="skills">Skills</h2>
 <p><strong>Coding</strong>: More than 20 years of experience. Recent
-experience in <em>Go/Golang (7 yrs), C# .Net (11 yrs),
-JavaScript/Node.js (15 yrs), Python (15 yrs), Ruby (8 yrs), TypeScript
+experience in <em>Go/Golang (8 yrs), C# .Net (11 yrs),
+JavaScript/Node.js (15 yrs), Python (16 yrs), Ruby (8 yrs), TypeScript
 and FlowScript (7 yrs), Java (13 yrs), C (17 yrs), PHP (14 yrs) MySQL
-(13 yrs), awk (6 yrs), bash (21 yrs), zsh (6 yrs), ash (6 yrs) and dash
+(13 yrs), awk (8 yrs), bash (22 yrs), zsh (6 yrs), ash (6 yrs) and dash
 (8 yrs);</em> less recent experience in <em>Perl, C++, Objective-C,
 Swift, Matlab, Octave, Verilog, Visual Basic .Net, Lua, ladder logic,
 PLC structured text/IEC 61131-3, Scheme, LISP.</em> Can write parallel
@@ -184,18 +187,20 @@ and concurrent code. Creates <em>parsers, compilers and
 interpreters</em> for new mini-languages. &gt;50 languages; learns new
 ones quickly.</p>
 <p><strong>Web technologies</strong>: Full stack web and cloud
-development using <em>GCP (7 yrs) and AWS (2 yrs); MySQL (13 yrs), NoSQL
-(8 yrs), React (7 yrs), Angular (1 yr), jQuery (13 yrs), Webpack (8
-yrs), npm/yarn (8 yrs), Docker (7 yrs), Express.js (3 yrs), Django (1
-yr), Flask (1 yr), Kubernetes (1 yr), ElasticSearch (1 yr), Redis (1
-yr), CouchDB (1 yr), Thrift (2 yrs), Protobuf (2 yrs), SRE (7 yrs),
-Splunk (1 yr), Datadog (6 yrs), PagerDuty (on-call 4 yrs).</em></p>
+development using <em>GCP (7 yrs), AWS (2 yrs) and OpenShift (1 yr);
+MySQL (13 yrs), PostgresQL (2 yrs), NoSQL (8 yrs), React (7 yrs),
+Angular (1 yr), jQuery (13 yrs), Webpack (8 yrs), npm/yarn (8 yrs),
+Docker/Podman (8 yrs), Express.js (3 yrs), Django (1 yr), Flask (1 yr),
+Kubernetes (2 yrs), ElasticSearch (1 yr), Redis (1 yr), CouchDB (1 yr),
+Thrift (2 yrs), Protobuf (2 yrs), SRE (7 yrs), Splunk (1 yr), Datadog (6
+yrs), PagerDuty (on-call 4 yrs).</em></p>
 <p><strong>Systems architect</strong>: Designs long-lasting build
 systems and cloud apps, and procedures for the problem and the team,
 some of which have been battle-tested for six years and are still going
 strong. Willing to break from convention for the sake of simpler,
 nimbler code. Seeks out feedback for improvements to training, tooling
-and architecture.</p>
+and architecture. In addition to the above, uses <em>systemd (1 yr) and
+Red Hat Enterprise Linux (3 yrs)</em>.</p>
 <p><strong>Security and privacy</strong>: Catches potential attack
 vectors at code review. Protects coworkers’ and customers’ privacy as a
 matter of deep personal conviction to “do no harm,” while allowing the
@@ -229,21 +234,22 @@ Vault, OpenShift Cluster/Kubernetes, Cobra, Gorm, Gin, Swagger (Swaggo),
 postgresql, BitBucket, Agile</em></p>
 <p><strong>Mentored other engineers in Linux setup and Golang</strong>:
 Documented onboarding processes and guided other devs in setting up
-Linux servers. <em>Linux, bash, Git Bash, postgresql, ssh, Go, Markdown,
-Confluence</em></p>
+Linux servers. <em>Linux, bash, Git Bash, postgresql, ssh, Go,
+golanci-lint, Jenkins, Markdown, Confluence</em></p>
 <h3 id="cloud-software-engineer-evernote-june-2016---february-2023-redwood-city-ca-four-years-then-remote-in-phoenix-az">Cloud
 Software Engineer, Evernote <small>(June 2016 - February 2023; Redwood
 City, CA four years; then remote in Phoenix, AZ)</small></h3>
 <p><strong>Led the re-architecting and migration of <a href="https://evernote.com">evernote.com</a> from PHP with AWS to Go and
-C# with Google App Engine</strong>: My system design has been in
-production for six years so far. Recursive component template system;
-26-language localization system; CMS integration for non-programmer
-edits to site; tooling for deploy, preview, unit test, and code quality;
-query tools to answer high-level questions about the web service.
-<em>Google Cloud Platform, AWS, Ubuntu, Debian and Alpine Linux, Docker,
-Kubernetes, git, Go/Golang, C#, Perl, PHP, Java, bash, dash, zsh,
-Python, MySQL, NoSQL, Redis, JavaScript/Node.js, Jenkins CI, webpack,
-React, yarn/npm, SASS, awk, grep, sed, jq, SRE</em></p>
+C# with Google App Engine</strong>: My system design was in production
+for seven years, until Evernote changed hands and moved. Recursive
+component template system; 26-language localization system; CMS
+integration for non-programmer edits to site; tooling for deploy,
+preview, unit test, and code quality; query tools to answer high-level
+questions about the web service. <em>Google Cloud Platform, AWS, Ubuntu,
+Debian and Alpine Linux, Docker, Kubernetes, git, Go/Golang, C#, Perl,
+PHP, Java, bash, dash, zsh, Python, MySQL, NoSQL, Redis,
+JavaScript/Node.js, Jenkins CI, webpack, React, yarn/npm, SASS, awk,
+grep, sed, jq, SRE</em></p>
 <p><strong>Content Delivery Network (CDN)</strong>: Host images for
 Iterable emails and load-balance them across the globe. <em>Google Cloud
 Storage</em></p>
