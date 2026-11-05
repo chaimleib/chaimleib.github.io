@@ -12,6 +12,8 @@ github_username: chaimleib
 
 # Build settings
 markdown: kramdown
+include:
+  - .well-known
 
 
 collections:
